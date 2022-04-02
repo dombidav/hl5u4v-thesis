@@ -1,0 +1,628 @@
+\documentclass[a4paper,12pt]{thesis-ekf}
+\usepackage[T1]{fontenc}
+\PassOptionsToPackage{defaults=hu-min}{magyar.ldf}
+\usepackage{fancyvrb,listingsutf8,xcolor,caption}
+\usepackage{fancyhdr,amsthm,amsmath,amssymb,listings}
+\usepackage{hyperref}
+\usepackage[magyar]{babel}
+\definecolor{dkgreen}{rgb}{0,.6,0}
+\definecolor{dkblue}{rgb}{0,0,.6}
+\definecolor{dkyellow}{cmyk}{0,0,.8,.3}
+\lstset{
+	inputencoding=utf8/latin2,
+	language=php,
+	basicstyle=\footnotesize\ttfamily,
+	numbers=left,
+	firstnumber=1,
+	breaklines,
+	postbreak=\hbox{$\color{red}\hookrightarrow\ $},
+	xleftmargin=2cm,
+	xrightmargin=2cm,
+	backgroundcolor=\color{gray!10},
+	frame=tlbr,
+	framesep=3pt,
+	keywordstyle=\bfseries\color{blue},
+	commentstyle=\itshape\color{teal},
+	stringstyle= \color{red},
+	identifierstyle=\color{dkgreen},
+	emph=[1]{php},
+	emphstyle=[1]\color{black},
+	emph=[2]{if,and,or,else},
+	emphstyle=[2]\color{dkyellow},
+	showstringspaces=false,
+	extendedchars=true,
+	literate={á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ö}{{\"o}}1 {ő}{{\H{o}}}1 {ú}{{\'u}}1 {ü}{{\"u}}1 {ű}{{\H{u}}}1,
+	keywords ={\_\_halt\_compiler, abstract, and, array,
+		as, break, callable, case, catch, class,
+		clone, const, continue, declare, default,
+		die, do, echo, else, elseif,
+		empty, enddeclare, endfor, endforeach, endif,
+		endswitch, endwhile, eval, exit, extends,
+		final, finally, for, foreach, function,
+		global, goto, if, implements, include,
+		include\_once, instanceof, insteadof,
+		interface, isset, list, namespace,
+		new, or, print, private, protected, public,
+		require, require\_once, return, static,
+		switch, throw, trait, try, unset, use, var,
+		while, xor, yield,
+	}
+}
+\theoremstyle{definition}
+\newtheorem{definicio}{Definíció}[chapter]
+\DeclareMathOperator{\tg}{tg}
+\setlength{\headheight}{15pt}
+\renewcommand{\lstlistingname}{kód}
+
+\begin{document}
+	\institute{Matematikai és Informatikai Intézet}
+	\title{Webservice Menedzselhető Beléptetőrendszerhez}
+	\author{Dombi Tibor Dávid\\Programtervező Informatikus}
+	\supervisor{Dr. Tajti Tibor\\Egyetemi Adjunktus}
+	\city{Eger}
+	\date{2021}
+	\maketitle
+	\tableofcontents
+	
+	\chapter*{Bevezetés}\label{ch-ThesisIntro}
+	Már egyetemi tanulmányaim előtt is legjobban a webes alkalmazások készítése foglalkoztatott, és ez az irány megmaradt végig a tanulmányaim során. Nem meglepő, hogy szakdolgozatomnak is ilyen témát választottam.
+	Az utolsó két évemben elkezdtem komolyabban foglalkozni az IoT eszközökkel, és mivel rendkívül érdekesnek találtam a témát, szerettem volna belevenni a szakdolgozatomba. Így született meg ez a projekt.
+	
+	Így született meg ez a dolgozati téma: Egy menedzselhető, online felületen elérhető beléptetőrendszer prototípusa. A feladat rendkívül aktuális, hisz minden cég szabályozza, hogy ki léphet be a telephelyére, illetve valamilyen módon követi, hogy dolgozói mikor érkeztek és távoztak. Ez a rendszer mindkét feladatot automatizálja.
+	
+	A projekt elkészítése alatt nagy hangsúlyt fektettem a költséghatékonyságra illetve arra, hogy minél felhasználóbarátabb legyen, mindezt úgy, hogy minden szükséges szolgáltatást megvalósítson.
+	
+	A piacon számtalan hasonló rendszert találni, de ezek mind rendkívül komplexek és költségesek, többnyire csak a szolgáltató szerelői tudják beszerelni és üzemben tartani, valamint alig-, vagy egyáltalán nem szabhatók személyre. A célom az volt, hogy a projekt megoldást kínáljon ezekre a problémákra. Itt megjegyezném, hogy a dolgozat csak a webservice-al foglalkozik, a hardveres feladatokkal nem, viszont biztosít egy általános interfészt, amihez bármilyen hardver komponenst csatolhatunk.
+	
+	A technológia kiválasztásánál az volt a célom, hogy minél általánosabb, és minél könnyebben hozzáférhető legyen. Az online elérés megvalósítására számtalan módszer van, de a legegyszerűbb, ha eleve az egész rendszer egy szerveren fut, és valamilyen webtechnológiával van megvalósítva. Ez magában hordozza azt az előnyt is, hogy így a program bármilyen platformról elérhető. Bár a PHP népszerűsége sokat zuhant az elmúlt években\footnote{Forrás: \url{https://octoverse.github.com/}}, még mindig az egyik legdominánsabb nyelv, ha szerver oldali programozásról van szó\footnote{Forrás: \url{https://w3techs.com/technologies/details/pl-php}}, így erre esett a választásom. Továbbá, a Node.js vagy Go lang alapú technológiákhoz képest jóval egyszerűbb olcsó, vagy kisebb adatforgalom esetén akár ingyenes tárhely szolgáltatót találni.
+	
+	\chapter{Rendszer Bemutatása}\label{ch-SystemIntro}
+		A rendszer rendkívül moduláris, így könnyen személyreszabható. De általánosítva, csupán egy webservice-ként üzemel, amihez Rest API-on keresztül csatlakozhatunk. Fontos megjegyezni, hogy a projekt nem arra szolgál, hogy programozási tudás nélkül beüzemelhető legyen, de nem is arra, hogy szolgáltatásként nyújtsuk. A projekt célja, hogy egy részletes, átfogó alapot adjon azoknak a fejlesztőknek, akik szeretnék a saját rendszerüket kifejleszteni.
+		
+		\section{Példa üzem}
+		Legyen adott egy vállalkozás, ami szeretné a székhelyéül szolgáló iroda üpületet biztosítani, továbbá nyomonkövetni, hogy a dolgozok mikor érkeznek és mikor távoznak az épületből. A cég eleve mikrokontrollerekkel foglalkozik, így a hardware-es kiépítés nem jelent problémát. Ebben az esetben nyúlhatnak olyan projektekhez, mint a jelen szakdolgozati munka.
+		
+		\emph{\nameref{sc-Installation}} után a program egy egyszerű Rest API szolgáltatás. A kommunikáció JSON formátumban történik. 
+		
+		Az hardware-es megvalósításra javaslat a \ref{ch-Hardware} fejezetben található. Megvalósítástól függetlenül, a zárnak el kell küldenie a Webservice-nek a saját azonosítóját, illetve a dolgozó azonosítóját (ez lehet példáúl az a szám amit egy RFID kártyáról leolvasott). A zárnak azonosítania kell magát. Ennek mikéntjét az \emph{\nameref{sc-auth} (\ref{sc-auth})} fejezetben részlet\-ezem. A webservice az ismert szabályok alapján eldönti, hogy az adott dolgozó ebben az időpontban használhatja-e a zárat, majd a döntésével válaszol a zárnak. Ha telepítettük a napló modult, akkor a döntés naplózásra kerül.
+		
+		Az admin felületen követhetjük, mind a rendszerben történt eseményeket, mind a zárak használatát.
+		
+		\section{Telepítés}\label{sc-Installation}
+		 A projekt letölthető a saját github repository-jából. Az alkalmazás futtatásához szükségünk lesz egy PHP szerverre (nginx, Apache, lighttpd, stb.), illetve egy Laravel által támogatott adatbázis szerverre (MySQL, Postgres, SQLite, vagy SQL Server). Ezek lehetnek a felhőben, vagy egy lokális szerveren. 
+		 
+		 Fontos megjegyezni, hogy ha az alkalmazás privát hálózaton működik, akkor kívülről nem-, vagy csak bonyolult hálózati konfigurációk után érjük azt el. Belső hálózaton természetesen továbbra is működik minden.
+		
+		Amennyiben a példa vállalkozásunk nem tervezi tovább fejleszteni az alkalmazást, csupán használni, akkor a beüzemelés csak a Composer csomagok telepítéséből, majd a használni kívánt funkciókat biztosító modulok telepítéséből áll. Ehhez érdemes a megfelelő Artisan parancsot használni:
+		
+		\begin{Verbatim}
+composer install         # A Composer csomagok telepítéséhez
+php artisan acs:install  # A telepítő varázsló indításához
+		\end{Verbatim}
+		
+		Ez elindítja a mellékelt \nameref{ssc-install-wizard}t. A telepítés végeztével a projekt használatra készen áll. Amennyiben szeretnénk, innen tovább fejleszthetjük.
+		
+		\subsection{Telepítő varázsló}\label{ssc-install-wizard}
+		A \verb|php artisan acs:install| parancssal elindított telepítő program végig vezet minket az alkalmazás konfigurációján.
+		
+		Elsőként arra kell válaszolnunk, hogy tovább szeretnénk-e fejleszteni a projektet, vagy csak használni szeretnénk. Mindkét esetben az alkalmazás alapvető adatainak, majd az adatbázis hozzáférési adatainak megadásával kell kezdjük a konfigurációt.
+		
+		A választott adatbázis szerverünkön létre kell hozzunk egy adatbázist amit majd később használ a rendszer, de ezt nem kell feltöltsük táblákkal, adatokkal, illetve teljesen mindegy milyen karakter kódolást választunk. Ezeket a Laravel migration rendszere fel fogja tölteni nekünk. 
+		
+		A következő kérdés a Git konfiguráció. Itt kiválaszthatjuk, hogy kapcsolódjunk-e egy már meglévő repository-hoz, hozzunk létre egy teljesen újat, vagy akár át is ugorhatjuk ezt a lépést, ha más verzió kezelőt szeretnénk használni, vagy nincs is szükségünk rá. 
+		
+		Amennyiben a fejlesztői módot választottuk telepítés során, úgy további kérdéseket tesz fel nekünk a program. Itt választhatjuk ki, hogy szeretnénk-e CI/CD eszközöket konfigurálni. Ha igen a program végig vezet minket a Github Actions és a Heroku beállításain. (Lásd: \nameref{ssc-CiCd}) Természetesen bármelyik átugorható, ha nincs rá szükségünk. Ha valamilyen más ilyen szolgáltatást szeretnénk használni, akkor érdemes egyszerűen kihagyni ezt a lépést.
+		
+		Ezután következik a modulok kiválasztása. Egyszerűen válasszuk ki azokat a funkciókat, amiket szeretnénk használni, és automatikusan telepítésre kerülnek. Ha egy modul további konfigurációt igényel (pl.: email szolgáltatás) akkor azt a következő lépésben tudjuk konfigurálni.
+		
+		Fejelsztői módban minden modulnál kiválaszthatjuk, hogy hová telepítse az adott modult: A \verb|vendor| mappába, vagy a \verb|project-root| mappába. A \verb|vendor| mappába történő telepítés akkor hasznos, ha egy modulra szükségünk van, de nem szeretnénk tovább fejleszteni vagy módosítani rajta. Ilyenkor egyszerű composer csomagként települ és az eredeti repository-val együtt frissül.\\*
+		Azonban, ha szeretnénk módosítani az adott modulon, akkor válasszuk a \verb|project-root| mappát, mint telepítés helye. Ezek a modulok a projekt fájljaink mellé kerülnek és lehetőségünk van saját csomagként publikálni őket.
+		
+		Végezetül némely szolgáltatás esetén érdemes újra indítani azt (pl. Apache). A programunkat ezután elérjük a beállított címen.
+		
+		\subsection{Tesztelés és CI/CD}\label{ssc-CiCd}	
+		A projekt tartalmazza a PHP Unit csomagot, amivel könnyedén tudunk unit teszteket írni. Tesztjeink többsége azonban magasabb szintű teszt lesz, így ezeket fejtem ki bővebben.
+		
+		Feature teszt írásához örököltessük a teszt osztályunkat a \verb|HttpTest| absztrakt osztálytól. Ekkor elérjük a Laravel beépített Http test funkcióit, illetve további segéd fügvényeket. Ezeknek előnye, hogy a "beszédes" függvényekkel a tesztünk könnyen olvasható lesz.
+		
+\begin{lstlisting}
+<?php
+
+namespace Tests\Feature;
+
+use Tests\HttpTest;
+use Utils\StatusCodes;
+
+class ExampleTest extends HttpTest
+{
+  public function testApiRequest()
+  {
+    $response = $this->actingAs(Admin())
+                     ->postJson(
+                       '/api/user',
+                       ['name' => 'John']
+                     );
+
+    $response->assertStatus(StatusCodes::CREATED)
+             ->assertJson(['created' => true]);
+  }
+}
+\end{lstlisting}
+
+		A Console Test lényegében Feature teszt, ami a saját Artisan parancsainkat hivatott ellenőrizni. Erre nem írtam külön segéd osztályt, a teszt osztályunkat örököltessük a \verb|TestCase| osztálytól (Ez a Laravel beépített teszt facade osztálya). Kiemelnék egy példát a Laravel dokumentációból:
+		
+\begin{lstlisting}[caption={Egy példa Artisan parancs}]
+/** Az Artisan parancs: **/
+Artisan::command('question', function () {
+  $name = $this->ask('What is your name?');
+
+  $language = $this->choice('Which language do you prefer?', [
+    'PHP',
+    'Ruby',
+    'Python',
+  ]);
+
+  $this->line('Your name is '.$name.' and you prefer '.$language.'.');
+});
+\end{lstlisting}
+
+\begin{lstlisting}[caption={A fenti parancs tesztelése}]
+/** Test a console command. **/
+public function test_console_command()
+{
+  $this->artisan('question')
+       ->expectsQuestion('What is your name?', 'Taylor Otwell')
+       ->expectsQuestion('Which language do you prefer?', 'PHP')
+       ->expectsOutput('Your name is Taylor Otwell and you prefer PHP.')
+       ->doesntExpectOutput('Your name is Taylor Otwell and you prefer Ruby.')
+       ->assertExitCode(0);
+}
+\end{lstlisting}
+
+		Végül pedig az adatbázis tesztekhez elérhető egy \verb|DatabaseTest| absztrakt osztály, melynek célja és használata is hasonló, mint az \verb|HttpTest| osztálynak, csupán más függvényeket tesz elérhetővé. Kiemelném, hogy mind az \verb|HttpTest| mind a \verb|DatabaseTest| a Laravel beépített \verb|TestCase| osztályától örököl, tehát a keretrendszer beépített függvényei mindenkor rendelkezésünkre állnak.
+		
+		Azért, hogy a felhasználó minél hamarabb megkapja a programját, illetve, hogy a hibák minél hamarabb kiderüljenek és minél hamarabb orvoslhatók legyenek, a modern programozási feladatok legnagyobb része használ valamilyen Continuous Integration-t és Continuous Development-et biztosító szolgáltatást. Amennyiben nagyobb mértékben szeretnénk tovább fejleszteni a projektet, mindenképpen érdemes elgondolkodnunk ezek használatán.
+		
+		A projekt majdnem teljesen konfigurálva érkezik Github actions (CI) illetve Heroku (CD) számára, így elég a projekt specifikus adatokat megadni (felhasználó nevek, API kulcsok, stb.) és már is használhatóak ezek a technológiák is. Hogy pontosan mit kell beállítanunk, az attól függ, hogy milyen szolgáltatást veszünk igénybe, de a környezeti változókat minden esetben fel kell vinnünk (Adatbázis hozzáférés, levelező szerver hozzáférés, stb.).
+		
+	\chapter{API kommunikáció}
+		A webservice egy RESTful API-t biztosít, hogy a saját eszközeink könnyedén tudjanak kommunikálni vele. Az erőforrásaink ebben az esetben a \emph{zárak}, \emph{dolgozók}, \emph{ezek csoportjai}, valamint a \emph{szabályok}. Ezekre a Bread műveleteket (\ref{sc-bread}) (Browse, Read, Edit, Add, Delete) úgy tudjuk alkalmazni, hogy az API megfelelő végpontjait érjük el, megfelelő HTTP metódussal (GET, POST, PUT/PATCH, DELETE).
+		
+		Az összes végpont, és azok válaszainak a leírását egy swagger fájlban megadtam, és a szakdolgozathoz csatoltam, így ezeket itt nem fejtem ki.
+		
+		\section{BREAD vagy CRUD műveletek}\label{sc-bread}
+			Az erőforrásokkal végezhető műveletekről beszélve gyakran használjuk a CRUD vagy BREAD mozaikszavakat. A CRUD a \emph{Create, Read, Update, Delete} szavak rövidítése. Gyakran használják mivel közvetlenül megfeleltethető mind az SQL nyelv metódusainak, mind az HTTP metódusainak:
+			
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{|c | c | c|}
+					\hline
+					\multicolumn{1}{|c|}{\textbf{SQL}} & \textbf{CRUD} & \textbf{HTTP} \\ \hline
+					INSERT & CREATE & POST \\ \hline
+					SELECT & READ & GET \\ \hline
+					UPDATE & UPDATE & PUT / PATCH \\ \hline
+					DELETE & DELETE & DELETE \\ \hline
+				\end{tabular}
+				\caption{HTTP, SQL, és CRUD műveletek megfeleltetése}
+				\label{table:http-sql-crud}
+			\end{table}
+		
+			Viszonylag újabb megközelítés, a BREAD (Browse, Read, Edit, Add, Delete). Ez lényegében megegyezik a CRUD metódusokkal, annyi különbséggel, hogy a BREAD külön veszi azt a metódust, amikor minden erőforrásra kíváncsiak vagyunk (Indexelés), illetve azt a metódust amikor csak egy erőforrás részleteire vagyunk kíváncsiak. Ez azért előnyösebb a számomra, mert ezek jobban megfeleltethetők a Laravel Controller metódusainak. Ha ezeket is meg szeretnénk feletetni egymással, akkor a táblázatunk a következőre módosul:
+	
+			\begin{table}[h!]
+				\centering
+				\begin{tabular}{|c|c|c|c|c|}
+					\hline
+					\textbf{SQL} & \textbf{CRUD} & \textbf{HTTP} & \textbf{BREAD} &\textbf{Laravel Controller} \\ \hline
+					SELECT & READ & GET & BROWSE & INDEX \\ \hline
+					SELECT & READ & GET & READ & SHOW \\ \hline
+					UPDATE & UPDATE & PUT / PATCH & EDIT & UPDATE \\ \hline
+					INSERT & CREATE & POST & ADD & STORE \\ \hline
+					DELETE & DELETE & DELETE & DELETE & DESTROY \\ \hline
+				\end{tabular}
+				\caption{HTTP, SQL, CRUD műveletek a BREAD-hez képest}
+				\label{table:http-sql-crud-bread}
+			\end{table}	
+		
+		\section{HTTP metódusok}
+			Az HTTP szabvány úgynevezett metódusokat (hivatalosan \emph{methods}, de szokás \emph{verb}-ként is hivatkozni rájuk) definiál nekünk, hogy ezzel közöljük a szerverrel, hogy mi a szándékunk az URI-ben megnevezett erőforrással. Vegyük példáúl a \verb|worker| erőforrást. Ebben az esetben az implementált metódusok:
+		
+			\subsection{GET}
+				Ezen HTTP metódussal két funkció is elérhető. Ha nem definiáljuk hogy pontosan melyik rekordot (példákban: melyik dolgozót) szeretnénk részletezni egy erőforráson belül, akkor vissza kapjuk az összes ezen erőforrásban tárolt rekordot (tehát az összes dolgozót). A Laravelben megegyezés szerint ez a függvény az \verb|index()|.
+\begin{lstlisting}[caption={Példa a BROWSE metódusra}][language=json]
+
+Request:
+ GET www.example.com/worker
+ 
+Response:
+ [
+   {
+     "name": "Shelia Lakin",
+     "created_at": "2021-06-30T12:09:20.478Z",
+     "phone": "938-402-3157 x810",
+     "id": "4b3403665fea6"
+   },
+   {
+     "name": "Whitney McClure",
+     "created_at": "2021-06-18T05:26:38.641Z",
+     "phone": "(765) 538-9079",
+     "id": "4b3407665bcd5"
+   }
+]
+\end{lstlisting}
+				
+				Amennyiben az URI-ben specifikáljuk, hogy melyik rekordot szeretnénk elérni, úgy részletes infókat kapunk arról (tehát egy dolgozó adatait kapjuk vissza). Laravelben ez a \verb|show()| függvény, konvenció szerint.
+\begin{lstlisting}[caption={Példa a READ metódusra}][language=json]
+
+Request:
+ GET www.example.com/worker/4b3403665fea6
+ 
+Response body:
+ {
+   "name": "Whitney McClure",
+   "created_at": "2021-06-18T05:26:38.641Z",
+   "last_logged_in": "2021-06-30T05:26:38.641Z",
+   "phone": "(765) 538-9079",
+   "id": "4b3407665bcd5",
+   "teams": [
+     {
+       "id": 1,
+       "name": "Team1"
+     },
+     {
+       "id": 2,
+       "name": "Team2"
+     }
+   ]
+ }
+\end{lstlisting}
+
+			\subsection{POST}
+				Ezzel a metódussal új erőforrást hozhatunk létre. Ehhez a kérésünk törzsében meg kell adnunk minden szükséges tulajdonságot, illetve az opcionális tulajdonságokat vagy megadjuk, vagy nem. Ezen tulajdonságok sorrendje tetszőleges. Kiemelném, hogy a kérésünk törzsében lehet egy JSON objektum vagy egy tömb, ami több objektumot is tartalmazhat. Ha ez utóbbi áll elő, akkor a webservice felveszi nekünk az összes rekordot. Ez a felvétel tranzakció szerűen működik, tehát ha bármelyik adatfelvitel sikertelen, akkor az összes visszavonásra kerül. Természetesen ehhez a művelethez elég az erőforrást azonosítanunk, nem szükséges egy konkrét rekord azonosítóját megadni az URI-ben. Ha az adatfelvitel sikeres a szerver 201-es státuszkóddal válaszol. Ez a Laravel-ben a \verb|store()| függvény.
+				
+			\subsection{PUT és PATCH}
+				Ez a két metódus nagyon hasonló egymáshoz, azonban van két nagyon fontos különbség: A PUT metódust használva az általunk megadott adatok \emph{felülírják} azt a rekordot, amit az URI-ben azonosítottunk. Ez azt jelenti, hogy ha részleges adatot küldünk, akkor csak ezek tárolódnak le, minden más elveszik. A PATCH ehhez képest kifejezetten részleges adatot vár, és csak a kapott tulajdonságokat módosítja. 
+				
+				A másik különbség abban van, hogy hogyan kezelik azt az esetet, amikor nem létezik a rekord, amit el szeretnénk érni: A PUT ilyenkor egyszerűen létrehozza azt, a PATCH viszont hibát ad 404-es státuszkóddal.
+				
+				A Laravel alap beállításai alapján nem tesz különbséget a PUT és a PATCH között, de ezt megváltoztathatjuk. Mivel gyakorlatban többnyire csak a PATCH metódus lesz használva, csak ezt implementáltam, és megtartottam a Laravel alap beállítását. Tehát mind a két metódus az \verb|update()| függvényt éri el.
+				
+			\subsection{DELETE}
+				Laravelben ez a \verb|destory()| függvény. A metódus neve elárulja a funkcióját is. Ezt a végpontot elérve, a webservice eltávolítja a URI-ben azonosított rekordot, majd a válaszban visszaküldi a kliensnek az eltávolított rekord részleteit, mint a \verb|show()| függvény, azonban ez a rekord már nem szerepel az adatbázisban.
+		
+		\section{Azonosítás}\label{sc-auth}
+			Mint minden webszolgáltatásnál itt is szükséges szabályozni a hozzáférést. Erre a Laravel Sanctum (korábban Airlock) csomagot használtam. Az azonosítás két féle képpen történhet.
+			
+			Az első, az a módszer, amit valószínűleg egy SPA (Single-page application) vagy más adminisztrátori felületet biztosító alkalmazás fog használni. Ez a \textqq{hagyományos} bejelentkezés, amikor a \emph{login} végpontra elküldjük a felhasználónevünk és a jelszavunk. Itt fontos, hogy a bejelentkezés CSRF (Cross-site Request Forgery) védelemmel van ellátva, tehát a kliensnek először egy CSRF Cookie-t kell kérnie a service-tól. Ezt a \verb|/sanctum/csrf-cookie| végponton teheti meg. 
+			
+			Amennyiben az email és jelszó kombinációt rendben találja a szerver, úgy a felhasználónk adataival valamint egy \emph{Credential Cookie}-val válaszol, mivel a \emph{Sanctum} a Laravel alap \emph{login-register} rendszerét használja. A kliens innentől mindig elküldi ezt a cookie-t a kérései mellé. (Böngészőben futó SPA esetén ez automatikusan megtörténik, de egyéb platformok esetén ezt elképzelhető, hogy manuálisan kell kezelni.) Ezután a felhasználónkkal jogosultságunknak megfelelően érhetjük el a webservice funkcióit. 
+			
+		\section{Hozzáférés szabályozás}
+			A jogosultságok kezeléséhez a Bouncer csomagot használtam. Mivel a jogosultságok kiosztásához is szükség van jogosultságra, így a telepítés után automatikusan van egy \emph{Superadmin} felhasználó regisztrálva. Miután  ezt megtettük, érdemes deaktiválni ezt a felhasználót. Minden felhasználó csoportokba osztható, és ezekhez a csoportokhoz rendelhetjük a megfelelő jogosultságokat. Gyakorlatilag minden végponthoz tartozik egy megfelelő jog, de hogy ezeket egyszerűbb legyen kezelni, nem csak végpontokhoz, de modellekhez is rendelhetünk szabályokat. Így például, ha szeretnénk egy csoportot, akik tudják kezelni a dolgozókat, de nem tudják törölni őket, akkor adunk egy \emph{engedélyezés} szabályt ennek a csoportnak, a dolgozó modelre nézve, majd adunk egy \emph{tiltó} szabályt ennek a csoportnak, a \emph{destroy} végpontra vagy a modell törlésére. Gyakorlatban ezt meg tehetjük két külön kéréssel, vagy akár egy olyan kéréssel is, ahol a törzsben egy tömbben adjuk meg mind a két szabályt:
+			
+			\begin{lstlisting}[caption={Példa a jogosultság kezelésre}][language=json]
+POST /authority HTTP/1.1
+Host: www.example.com
+Content-Type: application/json
+Content-Length: length
+
+
+[
+  {
+    "auth_group_id": "c4fe980f-0ad9-48c5-b658-f9fa85973dd9",
+    "on": "Models\Worker",
+    "allow": "*"
+  },
+  {
+    "auth_group_id": "c4fe980f-0ad9-48c5-b658-f9fa85973dd9",
+    "on": "Models\Worker",
+    "restrict": "destroy"
+  }
+]
+			\end{lstlisting}
+			
+	\chapter{Rest Service}
+
+		\section{Laravelről}
+			A Laravel alapvetően PHP keretrendszer, azonban napjainkra egy egész ökoszisztéma épült köré a különböző csomagok által. Ezen csomagok döntőtöbbsége, akár csak maga a keretrendszer, teljesen nyílt forráskódú az MIT szoftverlicensz alapján.
+			
+			A Laravel MVC architektúrára épül, és egy alapvetően egy rendkívül expresszív, kényelmes szintaktikát használ. A keretrendszer alapelve, hogy \textqq{ne törődjünk az apróságokkal}. Ez a gyakorlatban azt jelenti, hogy minden olyan feladatot belefoglaltak, amit máskülönben a fejlesztők projektenként újra és újra implementálnának. Innen a szlogenjünk: \textqq{The PHP Framework for Web Artisans} A projekt 2011 óta folyamatosan aktív, jelenleg a 8.x verziószám a legfrissebb, de 2021 szeptemberében tervezik kiadni a 9.x-et. Ez a verzió \emph{LTS (Long-term support)}, tehát a többi verzióhoz képest jóval tovább lesz támogatva.
+			
+			A szakdolgozat írásakor messze a Laravel a legelterjedtem és legnagyobb fejlesztőiközösséggel rendelkező PHP keretrendszer. Itt megjegyezném, hogy bár a WordPress jóval \textqq{nagyobb jelentősségű} ilyen értelemben, de az sokkal inkább egy \emph{CMS (Content Management System)} mint keretrendszer.
+			
+			\subsection{Eloquent}\label{sc:eloquent}
+				A Laravel beépített ORM (Object-relational mapping) rendszerrel érkezik, ez az \emph{Eloquent} névre hallgat, és lényegében megfelel az \emph{aktív rekord} programtervezési mintának. Az Eloquent az erőforrások tábláit osztályokként ábrázolja, az elérhető statikus metódusok tehát az egész táblára hatnak, míg egy példánya az osztálynak megfelel egy rekordnak a táblán.
+				
+				\pagebreak
+				
+				\begin{lstlisting}
+$user = User::find('test@example.com', 'email'); 
+
+/* 
+SELECT * FROM users 
+         WHERE email = "test@example.com" 
+         LIMIT 1 
+*/
+
+$user->email = 'test2@example.com';
+$user->save();
+
+/*
+UPDATE users SET email = "test2@example.com"
+             WHERE id = "50cb85ae-bdce-4646-a54f-0a8d94c551c4"
+*/
+				\end{lstlisting}
+				
+				Továbbá az Eloquent ad egy absztrakciós szintet az adatbázis fölött, így ha cserélődik az adatbázis motor (példáúl MySQL-ről SQL Server-re), akkor elég az csak a konfigurációban megadni, és az Eloquent automatikusan betölti a megfelelő \emph{driver}-t.
+				
+				Ugyanakkor az eloquent számtalan kritikát kap éppen amiatt, mert az aktív rekord mintára épül. Ez megnehezíti az adatbázis elválasztását a programkódtól a tesztelés alatt.
+				
+				Az eloquent emelett a PHP \textqq{varázsmetódusait} használja, ami problémákat okozhat, ha fejlesztés során megváltozik a tábla struktúrája, például a \emph{users} táblán átnevezzük a \emph{created\_at} mezőt \emph{registered\_at}-re, akkor az alkalmazásunkban mindenhol módosítanunk kell a \texttt{\$user->created\_at} kódot, hogy tükrözze ezt: \texttt{\$user->refistered\_at}. Ez egy nagyobb alkalmazásban igen gyorsan komplikálttá tud válni.
+				
+				A harmadik probléma pedig, hogy az eloquent használata során rendszeresen megszegjük a \emph{legkisebb tudás elvét} például amikor ilyen hívásokat írunk:
+				\begin{lstlisting}
+$roles = $user->roles->get();  // Ez megszegi a legkisebb tudás elvét
+$roles = $user->getRoles();    // Ez nem szegné meg
+				\end{lstlisting}
+				
+				Az első problémára A Database Factory-k (lásd: \ref{sssc-db_factory} fejezet) Seeder-ek (lásd: \ref{sssc-db_seeder} fejezet) használata jelent megoldást (Tehát mockup adatbázist hozunk létre). Emellett a Laravel alapból számtalan segéd funkcióval rendelkezik, így az adatbázis tesztek elvégzése annyira egyszerű, hogy nem érdemes emiatt elvetni az eloquent-et.
+				
+				 A második probléma jóval komplexebb. Először is néhány IDE (például az \emph{IntelliJ PhpStorm}) képes ilyen módosításokat végezni az adatbázison, majd a megfelelő bővítményekkel a teljes kódot képes átnézni és elvégezni a szükséges módosításokat. Természetesen teljes mértékben az IDE-re hagyatkozni, és remélni, hogy mindenhol kijavítja a kódunkat, nem egy jó megoldás. Ha tényleg nagyon komplex az alkalmazásunk, akkor alkalmazhatjuk a \emph{Repository} tervezési mintát. Ez egyben a harmadik problémánkat is megoldaná, azonban a téma jelenleg is nagyon vitatott a Laravel fejlesztők között, mivel az Eloquent alapból ad egy absztrakciót az adatbázis felett, így a Repository pattern-el ténylegesen csak ezt az átnevezési problémát orvosolná nekünk. Ennek ellenére a kódbázisunkat rendkívül megnöveli, illetve jóval kevésbé olvashatóvá válik a kódunk.
+				 
+				 Tekintettel arra, hogy a Laravel alapelve az olvasható és \textqq{elegáns} szintaxis, így én a szakdolgozatomban a Repository minta elhagyása mellett döntöttem.
+			
+			\subsection{Database}
+				\subsubsection{Migration}
+					A Laravel alapból biztosítja nekünk a \emph{Migration}-öket. Ezek lényegében úgy működnek, mint a verzió követő rendszerek, csak az adátbázisra. Minden migration felfogható egy \emph{\textqq{commit}}-nak, amiket \texttt{php artisan migrate} paranccsal tudunk \emph{\textqq{push}}-olni az adatbázisunkba. Egy migration bármilyen DDL műveletet tartalmazhat. SQL esetén ezek a \emph{CREATE (TABLE), ALTER, DROP} műveletek. Minden migration tartalmaz egy \texttt{up()} és \texttt{down()} függvényt. Az \texttt{up()} arra szolgál, hogy végrehajtsa a módosításokat, a \texttt{down()} pedig a visszavonásra.
+					
+					\begin{lstlisting}[caption={Példa migration (create\_workers\_table.php)}]
+class CreateWorkersTable extends Migration {
+
+  public function up(): void {
+    Schema::create('workers', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->string('name');
+      $table->string('rfid')->nullable();
+      $table->date('birthdate');
+      $table->string('telephone')->nullable();
+      $table->timestamps();
+    });
+  }
+
+  public function down(): void {
+    Schema::dropIfExists('workers');
+  }
+}
+					\end{lstlisting}
+					Egy migration-ben van lehetőségünk több DDL utasítást is kiadni egymás után. Ilyenkor ezek tranzakcióként futnak le (tehát ha egy nem fut le, akkor egyik sem), de fontos megjegyezni, hogy a különböző migration-öket \emph{nem} tranzakcióként kezeli. Itt a rendszernek van egy problémája: Abban az esetben, ha több utasítást adunk ki egy migration-ben, de adatbázisként SQLite-ot szeretnénk használni (ami tesztelésnél elég gyakori), a Laravel így is megpróbálja ezeket tranzakcióként futtatni, azonban az SQLite ezt nem támogatja, így egy ilyen migration nem tud lefutni. Tehát vagy nem használunk SQLite-ot, vagy nem használunk tranzakciókat a migration-öknél. Én ez utóbbit választottam.
+					
+				\subsubsection{Factory}\label{sssc-db_factory}
+					A Laravel factory osztályaival könnyedén tudunk generált adatokat létrehozni. Ennek leggyakoribb használata a teszt adatok létrehozása, de akkor is alkalmazható, ha egyszerűen egy modell létrehozásánál nem szeretnénk kitölteni valamelyik tulajdonságát, de üresen sem hagyhatjuk.
+					
+					Itt nagy segítségünkre van a PHP\textbackslash{}Faker csomag, ami akár neveket, lakcímeket, és más komplex adatokat is tud generálni nekünk.
+					
+					Egy factory általában egyetlen függvényt tartalmaz, ami egy \textqq{definíciós tömböt} ad vissza. Minden alkalommal, amikor egy model \emph{factory}-jét használljuk, akkor ez a tömb alapján hozza létre a modelt.
+					
+					\begin{lstlisting}[caption={Példa Factory (LockFactory.php)}]
+class LockFactory extends Factory
+{
+  protected $model = Lock::class;
+
+  public function definition(): array {
+    return [
+      'name' => $this->faker->name,
+      'device_key' => $this->faker->boolean(80) 
+                        ? Str::random(10) 
+                        : null,
+      'status' => $this->faker->numberBetween(0,2),
+    ];
+  }
+}
+					\end{lstlisting}
+					
+				\subsubsection{Seeder}\label{sssc-db_seeder}
+					A Seederek módot biztosítanak arra, hogy gyorsan feltöltsük az adatbázisunkat. Ezt használhatjuk akkor is amikor tesztelésre szeretnénk felkészíteni az adatbázisunkat illetve abban az alkalmazás első inicializációjakor is.
+					
+			\subsection{Modularitás}
+				A Laravel alap file felépítése egyszerű: \textqq{Az egyforma dolgkokat tegyük egymás mellé}. Így lesznek \emph{Controller}, \emph{Model}, stb. mappáink. Bár ez logikus, és kis projektnél nincs is vele probléma a szakdolgozatom fejlesztése során hamar belefutottam egy olyan problémába, hogy a \emph{Controller} mappám tizennégy fájlt tartalmazott, és a többi mappában sem volt jobb a helyzet. 
+				
+				Ezt orvosolandó áttértem \emph{DDD} (\emph{Domain Driven Design}) fejlesztési mintára (noha nem teljes mélységében alkalmaztam). Az én esetemben ez azt jelentette, hogy az alkalmazást \textqq{Domain}-ekre (vagy nem hivatalosan \textqq{tárgykörökre}) osztottam, majd minden domain-hez saját mappát rendeltem. A mappában csak az adott domain-hez tartozó file-okat helyeztem el (természetesen a domain-en belül is megfelelő mappa szerkezetbe rendezve). Így lett egy \emph{User} mappám, egy \emph{Worker} mappa, stb. Ez sokat segített abban, hogy tudjam hol keressek egy-egy file-t, illetve a \emph{namespace}-ek szeparációja miatt a hibaüzenetek is átláthatóbbak lettek.
+
+				Innen már csak kis lépés volt annak a szerkezetnek a kialakítása amit jelenleg is használok. Hogy kevésbé legyen a rendszer \emph{monolitikus} ezeket a domaineket külön csomagokba rendeztem, illetve a csomagok regisztációját a \emph{Service Provider}-ekre bíztam. Ennek a moduláris szerkezetnek több előnye is van:
+				\begin{itemize}
+					\item A fentebb említett, letisztultabb hiba üzenetek
+					\item Tisztább mappaszerkezet
+					\item A modulok külön-külön fejleszthetők, akár \emph{Open Source} porjektekben is
+					\item A felhasználónak elég csak a neki szükséges modulokat telepítenie
+					\item Minden modul külön definiálja a hozzá szükséges csomagokat (\emph{Dependecies}), így ezek nem keverednek
+					\item Composer-el frissíthetőek a modulok, illetve szükség esetén akár különböző verziók is telepíthetők
+				\end{itemize}			
+			
+				Mint azt fetebb említettem, a modulok kezelését a \emph{Composer} végzi, míg a funkcionalitás regisztrációját a \emph{Service Provider}.
+		\section{Jogosultságok}
+			A Jogosultságok kezeléséhez számtalan csomag elérhető. Az én választásoma \emph{Bouncer} csomagra esett, első sorban a szintaxisa miatt. Ez a csomag lehetővé teszi, hogy \textqq{szerepeket} hozzunk létre (\emph{role}), és ezekhez, vagy akár közvetlenül a felhasználókhoz is rendelhetünk szabályokat:
+			
+			\begin{lstlisting}[caption={Bouncer használata}]
+$user->assign('admin'); // Ha a role nem létezik, akkor felveszi újként
+			
+Bouncer::allow('admin')->everything();
+Bouncer::forbid('admin')->toManage(User::class); // Megengedi az index(), show(), update(), store(), destroy() metódusokat 
+
+$isUserAllowed = $user->can('edit-users'); // Igazat ad
+			\end{lstlisting}
+			
+			További előnye a Bouncernek, hogy teljesen integrálva van a Laravel alap \emph{Gate} rendszerével, így használható az beépített \emph{Policy} rendszer, illetve más csomagok is képesek használni a Bouncer által definiált jogosultságokat a \emph{Gate}-eken keresztül.
+			
+			A megfelelő \emph{endpoint}-ok használatával az adminisztrátori felületen keresztül is oszthatunk ki jogosultságokat, ugyan akkor ehhez meg kell legyen a megfelelő jogunk (nem oszthat akárki kedvére jogosultságokat). Éppen ezért, a webservice telepítése után lesz regisztrálva egy \emph{Superadmin} felhasználó (\emph{superadmin@acs.test}), akinek mindenhez van jogosultsága (\texttt{Bouncer::allow(\$superadmin)->everything()}). Miután beállítottuk az admin felületet használó \emph{user}-eket, javasolt törölni ezt a Superadmin felhasználót. Mivel a \emph{User} modell alapból \emph{Soft Delete}-et használ, így szükség esetén bármikor visszaállíthatjuk, és megmarad a jogosultsági kör.
+			
+			Amennyiben az alkalmazásunk fejlesztő környezetben fut, néhány további teszt felhasználó is regisztrálásra kerül:
+			\begin{itemize}
+				\item \emph{superadmin@acs.test}: Minden erőforrás művelet engedélyezett a számára.
+				\item \emph{admin1@acs.test}: A felhasználókat és azok jogosultságait kezelheti, továbbá olvashatja webservice naplóját (Laravel log).
+				\item \emph{hr1@acs.test}: A Dolgozókat és azok csoportjait, valamint a belépési szabályokat kezelheti.
+				\item \emph{supervisor1@acs.test}: A zárakat, valamint azok csoportjait kezelheti, továbbá olvashatja a zárak hozzáférési naplóját.
+				\item \emph{security1@acs.test}: Nem módosíthatja, de megnézheti egy dolgozó általános (nem privát jellegű) adatait, de csak akkor, ha ismeri az azonosítóját. \\
+				Gyakorlatilag arra a célra szolgál, amikor egy biztonsági őr szeretne meggyőződni arról, hogy kit enged be. Az azonosítót például meg tudhatja onnan, hogy a dolgozó RFID kártyáját leolvassa.
+			\end{itemize}
+		
+		\section{Erőforrások}
+			A projekt erőforrásai lényegében a modellek.
+			
+			\subsection{User}
+				Azon fehasználók adatit tárolja, akik be tudnak jelentkezni az adminisztrációs felületre. A bejelentkeztetésért és jogosultságkezeléssel foglalkozó szolgáltatások ezzel a modellel dolgoznak. Alapbeállítás szerint egyedi UUID-t használ az adatbázis kulcsának, nem sorszámot, valamint a törlés alapértelmezett viselkedése \textqq{Soft-Delete}, tehát amikor egy felhasználót törlünk, akkor nem kerül ki az adatbázisból, csupán kitöltésre kerül egy \texttt{deleted\_at} mező. A Laravel ezt a legtöbb esetben úgy kezeli, hogy az ilyen rekordokat ignorálja, mintha törölve lennének, ugyan akkor bármikor könnyen visszaállíthatjuk ezeket. Így törlés helyett inkább csak deaktiválásról beszélünk.
+				
+			\subsection{Worker}
+				Azon felhasználók adatait tárolja, akik a zárakat tudják használni. Egyedi UUID-t használ kulcsként, nem sorszámot. Álltalában tartozik hozzájuk valamilyen \textqq{ujjlenyomat} (\texttt{Fingerprint}), ami alapján azonosíthatóak. Ez lehet RFID kártya száma (ez a legvalószínűbb), felhasználónév, jelszó, de akár bináris adat is lehet. Ez utóbbi akkor szükséges, ha az azonosítást valamilyen komplex rendszer végzi, példáúl ujjlenyomat olvasó, de lehet akár retina szkenner is, stb.
+				
+			\subsection{Lock}
+				A zárak adatait tárolja, amiket vezérelni szeretnénk. Itt ismételten található egy ujjlenyomat mező, ezúttal (az ütközések elkerülése végett) \texttt{device\_fingerprint} néven. Ez azért fontos, mert így felvihetjük például az eszközünk MAC címét, beégetett sorozatszámát, vagy bármilyen egyedi, nem módosítható adatot az eszközről, és a webservice ez alapján tudja azonosítani. A zár nem feltétlenül ajtó zárat jelent. Lehet akár egy szoftver is, ami függetlenül működik, és csak bejelentkezéshez használja ezt a rendszert.
+				
+				Minden zárhoz tartozik egy állapot. Ezek sorban:
+				\begin{enumerate}
+					\setcounter{enumi}{-1}
+					\item Zárva (\emph{Locked}): Ez a zár nem enged át senkit.
+					\item Müködésben (\emph{Operational}): Ez a zár csak azokat engedi át, akik valamilyen szabály szerint átmehetnek.
+					\item Nyitva (\emph{Open}): Ez a zár mindenkit átenged, aki azonosítható, de a zár használatát naplózza.
+					\item Ismeretlen (\emph{Unknown}): Ez a zár túl rég óta nem küldött életjelet (\emph{Keep-alive signal}), így a webservice nem tudja ellenőrizni az állapotát.
+				\end{enumerate}
+			
+			\subsection{Group}
+				Mind a Worker, mind pedig a Lock modell csoportokhoz rendelhető az egyszerűbb kezelhetőség érdekében. Köszönhetően a Laravel polimorfikus kapcsolatainak (\texttt{morphTo()} és \texttt{morphToMany()}) nem volt szükség külön-külön modellek létrehozására. A csoportok lényege, hogy amikor egy új zárat üzemelünk be, ne kelljen minden szabályt újra definiálnunk, ha már egyszer egy másik zár esetén megtettük.
+				
+			\subsection{Bouncer táblák}
+				A Bouncer csomag négy modellt és az azokhoz tartozó adatbázis táblákat hozza létre nekünk. Ezek nagymértékben támaszkodnak a már említett polimorfikus kapcsolatokra, így bármilyen jogosultságot (\texttt{ability}-t) hozzá rendelhetünk bármilyen entitáshoz, illetve ezt a jogosultságot adhatjuk akár egy felhasználónak, akár egy jogkörnek (\texttt{role}).
+			
+		\section{Rules}
+			A hozzáférési szabályok mondják meg a programnak, hogy átengedhet-e egy dolgozót egy záron. A szabály \textqq{egyik oldalán} (\texttt{operator}) állhat akár egy vagy több dolgozó, akár egy dolgozó csoport, tehát például nem muszáj két dolgozó miatt egy teljesen új csoportot létrehozni. 
+			
+			A szabály \textqq{másik oldalán} (\texttt{subject}) pedig állhat egy vagy több zár, vagy egy zár csoport is, tehát itt is érvényes az, hogy két zár miatt nem feltétlenül kell új csoportot létrehozni.
+			
+			A szabály definíciója JSON formátumban tárolódik. Maga a szabály lehet megengedő, vagy tiltó is. Továbbá definiálhatunk egy számlálót is, ami azt adja, hogy hányszor alkalmazható még ez a szabály. Ennél a számlálónál a \texttt{0} érték azt jelenti, hogy a szabály deaktiválva van, még a \texttt{-1}, vagy ha nincs jelen, az azt jelenti, hogy bármennyiszer alkalmazható.
+			
+			A szabályoknak két alakja van:
+			\begin{enumerate}
+				\item Speciális (\texttt{Specific})
+				\item Általános (\texttt{Generic})
+			\end{enumerate}
+		
+			\subsection{Speciális hozzáférési szabály}
+				Ez egy olyan szabály, amit egy kifejezett idő intervallumra szeretnénk alkalmazni. Miután az intervallum lejárt a szabály törlődik.
+				
+				\begin{lstlisting}[caption={Egy példa speciális szabály létrehozása}][language=json]
+{
+  "operator_id": "5f1a20f7-368a-453e-b7ad-79b495b086b0",
+  "operator_type": "Worker",
+  "subject_id": "c15ad3b5-9e69-4eb7-9a8b-4bd76316d924",
+  "subject_type": "Group",
+  "count": 1,
+  "definition": {
+                 "from": "2021-06-04 10:00:00",
+                 "to": "2021-06-04 18:00:00",
+                 "allow": true
+                }
+}
+				\end{lstlisting}
+				
+			\subsection{Általános hozzáférési szabály}
+				Minden olyan szabály, ami nem idő intervallumhoz kötöt, vagy rendszeresen ismétlődik. Az \texttt{on\_every} tulajdonsággal definiálhatjuk, hogy mely napokon ismétlődik a szabály. Ezt a jelölést több féle képpen is megtehetjük. Felsorolhatjuk tömbben, hogy a hét hanyadik napjain érvényes a szabály, vagy szövegesen is megadhatjuk. A szöveges megadás jelenleg a következő definíciókat támogatja:
+				\begin{itemize}
+					\item \texttt{*}: Minden nap
+					\item \texttt{weekday}: Minden hétköznap
+					\item \texttt{weekend}: Minden hétvégén
+				\end{itemize}
+				Hogy a hét mely napjait számolja hétköznapnak és hétvégének, az személyre szabható. A \texttt{from} és \texttt{to} mező ekkor opcionális, alap értéke az adott napon \texttt{00:00:00.001} és \texttt{23:59:59.999}.
+				
+				\begin{lstlisting}[caption={Egy példa általános szabály létrehozása}][language=json][firstnumber=1]
+{
+  "operator_id": "5f1a20f7-368a-453e-b7ad-79b495b086b0",
+  "operator_type": "Worker",
+  "subject_id": "c15ad3b5-9e69-4eb7-9a8b-4bd76316d924",
+  "subject_type": "Group",
+  "count": 1,
+  "definition": {
+                  "on_every": "*"
+                  "from": "2021-06-04 10:00:00",
+                  "allow": true
+                }
+}
+			\end{lstlisting}
+		
+			Amennyiben a zár nyitási kérelmük mellé egyéb dolgozóval kapcsolatos adatot is csatolunk, úgy ezeket is ellenőrzi a rendszer. Ez például akkor hasznos, ha email cím - jelszó páros véd valamilyen zárat.
+		
+	\chapter{Admin Service}
+		A beléptetőrendszer menedzselését célszerű egy admin felületen megtenni. Az alkalmazás alapból nem rendelkezik semmilyen felülettel, csak az API-on keresztül kommunikálhatunk vele. A szakdolgozatban mellékeltem egy Angular alapú Adminisztrátori felületet, mely teljesen függetlenül, SPA formában működik. Ebből az következik, hogy el lehet helyezni egy független szerveren, de persze futhat ugyan azon a szerveren is, ahol a webservice fut.
+		
+		Az admin felület elsősorban demonstráció miatt került be, a szakdolgozat továbbra is a webservice-ra fókuszál
+	\chapter{Adminisztrátori felület}\label{ch-Admin}
+		\section{Kezdőlap}
+			...
+		\section{Profil műveletek}
+			...
+		\section{CRUD műveletek}
+			...
+		\section{Jogosultságok kezelése}
+			...
+		\section{Szabályok felvitele}
+			...
+	\chapter{Hardveres megvalósítási javaslat}\label{ch-Hardware}
+		Bár a szakdolgozat csak a webservice résszel foglalkozik, mint projekt úgy gondolom fontos javaslatot tenni a hardveres megvalósításra, ha más miatt nem is, legalább azért hogy egy alapot adjon annak, aki ténylegesen szeretné beüzemelni az alkalmazást. Természetesen számtalan módon megoldható az eszközök összekapcsolása, valamint a webservice-al való kommunikáció, ez amit ide írok egy példa csupán.
+		
+		\section{Elosztott rendszerű megoldás}
+			Ebben a példa szituációban minden zárt valamilyen Wi-Fi képes mikrokontroller vezérel. Az \texttt{ESP8266} egy viszonylag olcsó ilyen eszköz. Kössük hozzá a zármechanika motorját, illetve a leolvasónkat, ami legyen példáúl egy RFID leolvasó. Ezután az ESP-nkkel kapcsolódjunk Wi-Fi-n keresztül az internetre. Az ESP rendelkezik egy beégetett gyártási számmal (\texttt{Device ID}), ez lesz az eszközünk ujjlenyomata (Példáúl: \texttt{f84020329c0e}).
+			
+			Amikor egy dolgozó a leolvasóhoz érinti a saját RFID kártyáját, akkor az ESP a kártya azonosítóját olvassa, és nem a dolgozóét, ezért az adatfelvitelkor a kártya azonosítóját kell megadjuk mint a dolgozó ujjlenyomata (példáúl: \texttt{f3949935-5425-4879-b713-bd9f3bd77241}). A leolvasás után az ESP HTTP POST kérést indít a webservice felé, ami így néz ki (API-KEY hitelesítéssel):
+			
+			\begin{lstlisting}[caption={Elosztott rendszer HTTP kérése}]
+POST /api/acs/confirm/f84020329c0e
+Host: www.acs.example.com
+Content-Type: application/json; charset=utf-8
+Content-Length: {LENGTH}
+Accept: application/json
+X-API-KEY: kLhIlqOvCRcawFlD-tdMBPCHDUGhtuCuO
+
+{
+	"worker": {
+	  "fingerprint": "f3949935-5425-4879-b713-bd9f3bd77241"
+	}
+}
+			\end{lstlisting}
+			
+			Figyeljük meg, hogy az eszköz ujjlenyomata az URI-ben kapott helyet. Ezt az ujjlenyomatot nyugodtan kicserélhetjük az eszköz tényleges, adatbázisban használt kulcsára, a hitelesítés akkor is működni fog. Ezután a szerver vagy engedélyezi, vagy valamilyen hiba üzenettel válaszol.
+			
+		\section{Csillagpontos megoldás}
+			Amennyiben nem szeretnénk minden zárhoz külön-külön mikrokontrollert elhelyezni, elképzelhető az is, hogy egy nagyobb, több csatolakozási lehetőséggel rendelkező vezérlő egységet használunk (például egy Raspberry Pi-t), és ehhez, csillagpontosan hozzákötünk minden zárat és minden leolvasót. 
+			
+			A leolvasásra hasonlóan reagál, mint az elosztott rendszer, de itt a vezérlőnek tudnia kell, hogy melyik leolvasó melyik zárhoz tartozik. Az üzenet URI-jében az adott zár ujjlenyomatát kell használni. Arra nincs szükség, hogy a vezérlő az API kulcsát is ismerje minden egyes zárnak, használhatja minden lekéréshez a saját API kulcsát. 
+			
+	\chapter{Továbbfejlesztási lehetőségek}
+		Természetesen, mint minden szoftver, ez az alkalmazás is rendelkezik hibákkal, hiányosságokkal. Ezeket a jövőben érdemes lenne kijavítani, vagy néhol újra gondolni.
+		
+		\subsubsection*{Bejelentkezés és Regisztráció}
+			A bejelentkezés és a regisztráció során a felhasználó adatai (kiemelten a jelszó) titkosítatlanul kerülnek átadásra, és csak a szerveren kezeltem le. Ezt jó lenne már a kliens oldalon titkossá tenni. Erre megoldást jelenthet a JWT.
+			
+		\subsubsection*{Képek feltöltése}
+			Jelenleg a webservice nem támogatja a képek feltöltését, pedig mind az adminisztrátori felület használóit, mind a dolgozókat könnyebb lenne beazonosítani.
+		
+		\subsubsection*{Modellek}
+			Fentebb már részleteztem az Eloquent problémáit (lásd: \ref{sc:eloquent} - \nameref{sc:eloquent} fejezet), ezt orvosolandó implementálni lehetne a \texttt{repository pattern} irányelveit.
+		
+		\subsubsection*{Rest API helyett GraphQL}
+			Az alkalmazás méreteiből adódóan az alkalmazás messze túl sok végponttal rendelkezik. Ez orvosolható lenne azzal, ha hagyományos Restful API helyett GraphQL-t használna az alkalmazás.
+		
+		\subsubsection*{Adminisztrátori tevékenységek naplózása}
+			Jelenleg csak a zárak használata, valamint a Laravel-el kapcsolatos események kerülnek naplózásra. Érdemes lenne az olyan eseményeket is feljegyezi, mint példáúl, ha valaki új rekordot vitt fel, vagy épp törölt egyet.
+			
+		\subsubsection*{Szabály definíció tisztázása}
+			A mostani struktúrája a hozzáférési szabály definícióknak elég körülményes, és nem evidens. Érdemes lenne új struktúrában gondolkodni.
+			
+		\subsubsection*{Bouncer csomag elvetése}
+			Bár szintaxisa miatt igen kedvelt csomag, sajnos mind teljesítményben, mind korlátoltásga miatt alulmarad a \texttt{Laravel Spatie}-vel szemben. 
+			
+		\subsubsection*{MongoDB támogatás}
+			Habár sem a Laravel, sem a PHP nem támogatja alapból a MongoDB adatbázisokat, a PHP a megfelelő kiegészítővel, a Laravel pedig a megfelelő csomag telepítésével, viszonylag egyszerűen képessé tehető rá. A MongoDB egyre nagyobb népszerűségnek örvend az elmúlt években, így egyáltalán nem elképzelhetetlen, hogy valaki ezt szeretné használni az alkalmazáshoz. Azonban ekkor két probléma merül fel:
+			
+			Az első, hogy a Bouncer egészen egyszerűen nem képes a Mongo környezetben működni.
+			
+			A második, hogy a \texttt{MongoDB-Eloquent} csomag használatához egy teljesen másik absztrakt Model osztálytól kell örököltetnünk a modelljeinket, és a két absztrakt osztálynak nincs közös őse, így nem lehet egyszerűen \textqq{kicserélni} egyiket a másikkal. A legtöbb beépített függvény a Laravelben pedig az eredeti Model típust várja paramétereiben.
+		
+\end{document}
