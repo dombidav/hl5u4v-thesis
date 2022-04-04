@@ -1,9 +1,19 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
+    admin-panel:
+        build:
+            context: ./admin-panel
+            dockerfile: Dockerfile
+        ports:
+            - "4201:4201"
+        container_name: admin-panel
+        volumes:
+            - ./admin-panel:/usr/src/app/admin-panel
+            - /usr/src/app/app-ui/node_modules
     laravel.test:
         build:
-            context: ./vendor/laravel/sail/runtimes/8.1
+            context: ./webservice/vendor/laravel/sail/runtimes/8.1
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
@@ -18,7 +28,7 @@ services:
             XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
             XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
         volumes:
-            - '.:/var/www/html'
+            - './webservice:/var/www/html'
         networks:
             - sail
         depends_on:

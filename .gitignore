@@ -72,3 +72,11 @@ fabric.properties
 docs/documentation.pdf
 
 src/web-service/public/js/app.js
+
+.idea/
+
+.env
+
+node_modules/
+
+*.log

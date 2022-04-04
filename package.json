@@ -1,0 +1,23 @@
+{
+  "name": "hl5u4v-thesis",
+  "version": "1.0.0",
+  "repository": "https://github.com/dombidav/hl5u4v-thesis.git",
+  "author": "Dombi Tibor <dombidav@gmail.com>",
+  "scripts": {
+    "env:generate": "node scripts/env-generate.js",
+    "install:scripts": "cd scripts && yarn",
+    "install:api": "cd webservice && composer install",
+    "install:admin": "cd admin-panel && yarn",
+    "install:docker": "docker-compose up --no-start --abort-on-container-exit",
+    "install:database": "yarn start -d && yarn run:api migrate:fresh --seed",
+    "set:key": "node scripts/set-key.js",
+    "postinstall": "yarn install:scripts && yarn env:generate && yarn install:api && yarn install:admin && yarn install:docker && yarn install:database",
+    "start": "docker-compose up",
+    "run:api": "node scripts/run-in-container.js api",
+    "run:ui": "node scripts/run-in-container.js ui",
+    "api": "yarn run:api",
+    "ui": "yarn run:ui"
+  },
+  "license": "MIT",
+  "private": false
+}
