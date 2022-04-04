@@ -1,0 +1,11 @@
+{
+  "name": "hl5u4v-thesis-scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "dombidav",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "dotenv": "^16.0.0"
+  }
+}
