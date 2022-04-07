@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LockController;
+use App\Http\Controllers\LockGroupController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
@@ -35,10 +36,15 @@ Route::group(['middleware' => 'auth'],   function ($router) {
     // Non-resource routes
     Route::post('/team-control', [TeamController::class, 'attach'])->name('team.attach');
     Route::delete('/team-control', [TeamController::class, 'detach'])->name('team.detach');
+    Route::post('/lock-control', [LockGroupController::class, 'attach'])->name('lock_group.attach');
+    Route::delete('/lock-control', [LockGroupController::class, 'detach'])->name('lock_group.detach');
+
 
     // Resources
     Route::apiResource('user', UserController::class);
     Route::apiResource('worker', WorkerController::class);
     Route::apiResource('lock', LockController::class);
     Route::apiResource('team', TeamController::class);
+    Route::apiResource('lock_group', LockGroupController::class);
+
 });
