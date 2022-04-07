@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\JwtAuthController;
+use App\Http\Controllers\LockController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Http\Request;
@@ -33,4 +34,5 @@ Route::group(['middleware' => 'auth'],   function ($router) {
     // Resources
     Route::apiResource('user', UserController::class);
     Route::apiResource('worker', WorkerController::class);
+    Route::apiResource('lock', LockController::class);
 });
