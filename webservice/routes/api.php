@@ -3,6 +3,7 @@
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LockController;
 use App\Http\Controllers\LockGroupController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
@@ -46,5 +47,6 @@ Route::group(['middleware' => 'auth'],   function ($router) {
     Route::apiResource('lock', LockController::class);
     Route::apiResource('team', TeamController::class);
     Route::apiResource('lock_group', LockGroupController::class);
+    Route::apiResource('log', LogController::class)->except(['store', 'update', 'destroy']);
 
 });
