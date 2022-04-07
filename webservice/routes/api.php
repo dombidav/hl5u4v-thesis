@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessController;
 use App\Http\Controllers\AccessRuleController;
 use App\Http\Controllers\JwtAuthController;
 use App\Http\Controllers\LockController;
@@ -33,6 +34,8 @@ Route::group([
     Route::post('/token-refresh', [JwtAuthController::class, 'refresh']);
     Route::post('/signout', [JwtAuthController::class, 'signout']);
 });
+
+Route::put('/access/{device_key}', [AccessController::class, 'enter'])->name('access.enter');
 
 Route::group(['middleware' => 'auth'],   function ($router) {
     // Non-resource routes
