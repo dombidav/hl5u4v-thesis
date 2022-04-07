@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\JwtAuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,7 +15,20 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::group([
+                 'middleware' => 'api',
+                 'prefix' => 'auth',
+                 'as' => 'auth.',
+             ], function ($router) {
+    /** @deprecated registration is not available. Every user should be added from admin panel */
+    Route::post('/signup', [JwtAuthController::class, 'register']);
+    Route::post('/signin', [JwtAuthController::class, 'login']);
+    Route::get('/me', [JwtAuthController::class, 'profile']);
+    Route::post('/token-refresh', [JwtAuthController::class, 'refresh']);
+    Route::post('/signout', [JwtAuthController::class, 'signout']);
+});
 
-Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
+Route::group(['middleware' => 'auth'],   function ($router) {
+    // Resources
+    Route::apiResource('user', UserController::class);
 });

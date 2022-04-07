@@ -7,18 +7,19 @@ use Tests\TestCase;
 
 class RegistrationTest extends TestCase
 {
-    use RefreshDatabase;
 
     public function test_new_users_can_register()
     {
-        $response = $this->post('/register', [
+        $response = $this->post('api/auth/signup', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
 
-        $this->assertAuthenticated();
-        $response->assertNoContent();
+        $response->assertOk();
+        $response->assertJsonStructure([
+                                           'message', 'user' => ['name', 'email', 'id', 'created_at', 'updated_at']
+                                       ]);
     }
 }
