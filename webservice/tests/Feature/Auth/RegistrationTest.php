@@ -17,7 +17,7 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
 
-        $response->assertOk();
+        $response->assertCreated();
         $response->assertJsonStructure([
                                            'message', 'user' => ['name', 'email', 'id', 'created_at', 'updated_at']
                                        ]);
