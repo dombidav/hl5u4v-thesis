@@ -1,4 +1,4 @@
-const API_CONTAINER_NAME = 'hl5u4v-thesis-laravel.test-1'
+const API_CONTAINER_NAME = 'hl5u4v-thesis_laravel.test_1'
 const UI_CONTAINER_NAME = 'admin-panel'
 const API_CONTAINER_CLI = 'php artisan'
 const UI_CONTAINER_CLI = 'ng'

@@ -6,6 +6,6 @@ COPY package*.json ./
 
 RUN npm install -g @angular/cli @angular-devkit/build-angular && yarn
 
-EXPOSE 4201
+EXPOSE 4200
 
 CMD ["yarn", "start"]

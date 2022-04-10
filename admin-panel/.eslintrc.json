@@ -1,0 +1,44 @@
+{
+  "root": true,
+  "ignorePatterns": [
+    "*.d.ts",
+    "node_modules",
+    "dist",
+    "index.html"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb-typescript/base"
+  ],
+  "plugins": [
+    "@angular-eslint",
+    "import",
+    "prettier"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.eslint.json"
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^__",
+            "varsIgnorePattern": "^__",
+            "ignoreRestSiblings": true
+          }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "semi": ["error", "never"],
+        "@typescript-eslint/semi": ["error", "never"]
+      }
+    }
+  ]
+}

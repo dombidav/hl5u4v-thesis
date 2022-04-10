@@ -6,7 +6,7 @@ services:
             context: ./admin-panel
             dockerfile: Dockerfile
         ports:
-            - "4201:4201"
+            - "4200:4200"
         container_name: admin-panel
         volumes:
             - ./admin-panel:/usr/src/app/admin-panel
