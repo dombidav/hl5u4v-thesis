@@ -4,6 +4,8 @@ import { api } from '../../../utils/url.tools'
 import { ILoginResponse } from '../../../types/login-response.interface'
 import { firstValueFrom } from 'rxjs'
 import { IUser } from '../../../types/user.interface'
+import { StorageService } from './storage.service'
+import { STORAGE_KEY } from '../consts/storage.keys'
 
 @Injectable({
   providedIn: 'root',
@@ -35,13 +37,14 @@ export class AuthService {
     return this._token
   }
 
-  constructor(private readonly http: HttpClient) {  }
+  constructor(private readonly http: HttpClient, private readonly storage: StorageService) {
+  }
 
   async login(cred: { email: string, password: string }) {
-    console.log('login', cred)
     const response = await firstValueFrom(this.http.post<ILoginResponse>(api(['auth', 'signin']), cred))
-    console.log('login response', response)
-    localStorage.setItem('token', response.access_token)
-    localStorage.setItem('user', JSON.stringify(response.user))
+    await Promise.all([
+      this.storage.set(STORAGE_KEY.JWT_TOKEN, response.access_token),
+      this.storage.set(STORAGE_KEY.USER_DATA, response.user)
+    ])
   }
 }
