@@ -9,41 +9,41 @@ import { STORAGE_KEY } from '../consts/storage.keys'
 
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-  constructor(
-    private readonly storage: StorageService,
-    private readonly router: Router,
-    private readonly redirect: RedirectService,
-  ) {}
+    constructor(
+        private readonly storage: StorageService,
+        private readonly router: Router,
+        private readonly redirect: RedirectService,
+    ) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return from(this.handle(next, req))
-  }
-
-  private handleError(err: HttpErrorResponse): Observable<any> {
-    switch (err.status) {
-      case 401:
-        this.redirect.push(window.location.href)
-        this.redirect.to('/login')
-        break
-      case 422:
-      default:
-        return throwError(() => err)
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return from(this.handle(next, req))
     }
 
-    return of(err.message)
-  }
+    private handleError(err: HttpErrorResponse): Observable<any> {
+        switch (err.status) {
+            case 401:
+                this.redirect.push(window.location.href)
+                this.redirect.to('/login')
+                break
+            case 422:
+            default:
+                return throwError(() => err)
+        }
 
-  private async handle(next: HttpHandler, req: HttpRequest<any>) {
-    let token: string | null = null
-    if (!req.headers.get('X-AppMeta')?.split(',').includes('NO-AUTH')) {
-      await this.storage.waitForStorage()
-      token = (await this.storage.get(STORAGE_KEY.JWT_TOKEN)) ?? null
+        return of(err.message)
     }
-    if (!token?.startsWith('Bearer ')) {
-      token = `Bearer ${token}`
-    }
-    const authReq = req.clone(token ? { headers: req.headers.set('Authorization', token) } : {})
 
-    return lastValueFrom(next.handle(authReq).pipe(catchError((x) => this.handleError(x))))
-  }
+    private async handle(next: HttpHandler, req: HttpRequest<any>) {
+        let token: string | null = null
+        if (!req.headers.get('X-AppMeta')?.split(',').includes('NO-AUTH')) {
+            await this.storage.waitForStorage()
+            token = (await this.storage.get(STORAGE_KEY.JWT_TOKEN)) ?? null
+        }
+        if (!token?.startsWith('Bearer ')) {
+            token = `Bearer ${token}`
+        }
+        const authReq = req.clone(token ? { headers: req.headers.set('Authorization', token) } : {})
+
+        return lastValueFrom(next.handle(authReq).pipe(catchError((x) => this.handleError(x))))
+    }
 }

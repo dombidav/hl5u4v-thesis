@@ -5,7 +5,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular'
 
-
 import { AppComponent } from './app.component'
 import { P404Component } from './views/error/404.component'
 import { P500Component } from './views/error/500.component'
@@ -13,11 +12,11 @@ import { LoginComponent } from './views/login/login.component'
 import { RegisterComponent } from './views/register/register.component'
 
 import {
-  AppAsideModule,
-  AppBreadcrumbModule,
-  AppHeaderModule,
-  AppFooterModule,
-  AppSidebarModule,
+    AppAsideModule,
+    AppBreadcrumbModule,
+    AppHeaderModule,
+    AppFooterModule,
+    AppSidebarModule,
 } from '@coreui/angular'
 
 // Import routing module
@@ -34,50 +33,54 @@ import { Drivers } from '@ionic/storage'
 import { RouteReuseStrategy } from '@angular/router'
 import { FormsModule } from '@angular/forms'
 import { SharedComponentsModule } from './shared-components/shared-components.module'
-
-@NgModule({
-  imports: [
-    BrowserModule,
-    SharedComponentsModule,
-    IonicModule.forRoot(),
-    IonicStorageModule.forRoot({ name: '_hl5u4v', driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage] }),
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    FormsModule,
-    AppAsideModule,
-    AppBreadcrumbModule.forRoot(),
-    AppFooterModule,
-    AppHeaderModule,
-    AppSidebarModule,
-    BsDropdownModule.forRoot(),
-    TabsModule.forRoot(),
-    IconModule,
-    IconSetModule.forRoot(),
-    HttpClientModule,
-    CoreModule,
-  ],
-  declarations: [
-    AppComponent,
-    P404Component,
-    P500Component,
-    LoginComponent,
-    RegisterComponent,
-  ],
-  providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    {
-      provide: LocationStrategy,
-      useClass: HashLocationStrategy,
-    },
-    IconSetService,
-  ],
-  bootstrap: [ AppComponent ],
-})
-export class AppModule {
-  constructor(private injector: Injector) {
-    APP_INJECTOR = this.injector
-  }
-}
+import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt'
+import { StorageService } from './core/services/storage.service'
+import { jwtOptionsFactory } from '../utils/jwt-options.factory'
 
 /** Exposed injector for utility classes and tests */
 export let APP_INJECTOR: Injector
+
+@NgModule({
+    imports: [
+        BrowserModule,
+        SharedComponentsModule,
+        IonicModule.forRoot(),
+        IonicStorageModule.forRoot({ name: '_hl5u4v', driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage] }),
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        FormsModule,
+        AppAsideModule,
+        AppBreadcrumbModule.forRoot(),
+        AppFooterModule,
+        AppHeaderModule,
+        AppSidebarModule,
+        BsDropdownModule.forRoot(),
+        TabsModule.forRoot(),
+        IconModule,
+        IconSetModule.forRoot(),
+        HttpClientModule,
+        JwtModule.forRoot({
+            jwtOptionsProvider: {
+                provide: JWT_OPTIONS,
+                useFactory: jwtOptionsFactory,
+                deps: [StorageService],
+            },
+        }),
+        CoreModule,
+    ],
+    declarations: [AppComponent, P404Component, P500Component, LoginComponent, RegisterComponent],
+    providers: [
+        { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+        {
+            provide: LocationStrategy,
+            useClass: HashLocationStrategy,
+        },
+        IconSetService,
+    ],
+    bootstrap: [AppComponent],
+})
+export class AppModule {
+    constructor(private injector: Injector) {
+        APP_INJECTOR = this.injector
+    }
+}

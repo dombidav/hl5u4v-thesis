@@ -8,25 +8,21 @@ import { DefaultInterceptor } from './interceptors/default.interceptor'
 import { Router } from '@angular/router'
 import { StorageService } from './services/storage.service'
 
-
-
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-  ],
-  providers: [
-    AuthService,
-    RedirectService,
-    ConfirmationService,
-      RedirectService,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useFactory: (router: Router, storage: StorageService, redirect: RedirectService) =>
-          new DefaultInterceptor(storage, router, redirect),
-      multi: true,
-      deps: [Router, StorageService, RedirectService],
-    },
-  ],
+    declarations: [],
+    imports: [CommonModule],
+    providers: [
+        AuthService,
+        RedirectService,
+        ConfirmationService,
+        RedirectService,
+        {
+            provide: HTTP_INTERCEPTORS,
+            useFactory: (router: Router, storage: StorageService, redirect: RedirectService) =>
+                new DefaultInterceptor(storage, router, redirect),
+            multi: true,
+            deps: [Router, StorageService, RedirectService],
+        },
+    ],
 })
-export class CoreModule { }
+export class CoreModule {}
