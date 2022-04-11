@@ -1,0 +1,69 @@
+<app-layout>
+    <div class='card'>
+        <form #form autocomplete='off'>
+            <div class='p-fluid grid'>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <input type='text' id='id' [readOnly]='true' name='id' pInputText [(ngModel)]='worker.id'
+                               #id='ngModel'>
+                        <label for='id'>ID</label>
+                    </span>
+                </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <input type='text' id='name' autocomplete='false' name='name' pInputText
+                               [(ngModel)]='worker.name' required
+                               minlength='4' #name='ngModel' maxlength='255'>
+                        <label for='name'>Name</label>
+                    </span>
+                    <div *ngIf='name.invalid && (name.dirty || name.touched)'
+                         class='alert'>
+                        <div *ngIf="name.errors?.['required']">
+                            Name is required.
+                        </div>
+                        <div *ngIf="name.errors?.['minlength']">
+                            Name must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="name.errors?.['maxlength']">
+                            Name must be shorter than 250 characters.
+                        </div>
+                    </div>
+                </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <input type='text' id='rfid' autocomplete='false' name='rfid' pInputText
+                               [(ngModel)]='worker.rfid'
+                               minlength='4' #rfid='ngModel' maxlength='255'>
+                        <label for='rfid'>RFID</label>
+                    </span>
+                    <div *ngIf='rfid.invalid && (rfid.dirty || rfid.touched)'
+                         class='alert'>
+                        <div *ngIf="rfid.errors?.['minlength']">
+                            RFID, if set, must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="rfid.errors?.['maxlength']">
+                            RFID must be shorter than 250 characters.
+                        </div>
+                    </div>
+                </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <p-calendar dateFormat='yy-mm-dd' id='birthdate' name='birthdate' [appendTo]='anchor' required
+                                    [(ngModel)]='worker.birthdate' #birthdate='ngModel' [panelStyle]='{width: "400px"}'></p-calendar>
+                        <label for='birthdate'>Birthdate</label>
+                    </span>
+                    <div *ngIf='birthdate.invalid && (birthdate.dirty || birthdate.touched)'
+                         class='alert'>
+                        <div *ngIf="birthdate.errors?.['required']">
+                            Birthdate is required.
+                        </div>
+                    </div>
+                </div>
+                <div class='field col-12 col-md-4 my-5' (load)='log([])'>
+                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save([name, rfid, birthdate])' [disabled]='check([name, rfid, birthdate])'></p-button>
+                </div>
+            </div>
+        </form>
+        <div style='position: absolute; bottom: 25vh; left: 0' #anchor></div>
+    </div>
+</app-layout>

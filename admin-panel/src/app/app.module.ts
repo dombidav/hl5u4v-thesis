@@ -36,6 +36,9 @@ import { SharedComponentsModule } from './shared-components/shared-components.mo
 import { JWT_OPTIONS, JwtModule } from '@auth0/angular-jwt'
 import { StorageService } from './core/services/storage.service'
 import { jwtOptionsFactory } from '../utils/jwt-options.factory'
+import { ToastModule } from 'primeng/toast'
+import { ConfirmationService, MessageService } from 'primeng/api'
+import { ConfirmDialogModule } from 'primeng/confirmdialog'
 
 /** Exposed injector for utility classes and tests */
 export let APP_INJECTOR: Injector
@@ -67,6 +70,8 @@ export let APP_INJECTOR: Injector
             },
         }),
         CoreModule,
+        ToastModule,
+        ConfirmDialogModule,
     ],
     declarations: [AppComponent, P404Component, P500Component, LoginComponent, RegisterComponent],
     providers: [
@@ -75,6 +80,8 @@ export let APP_INJECTOR: Injector
             provide: LocationStrategy,
             useClass: HashLocationStrategy,
         },
+        MessageService,
+        ConfirmationService,
         IconSetService,
     ],
     bootstrap: [AppComponent],

@@ -11,15 +11,15 @@ import {
 } from '@angular/router'
 import { Observable } from 'rxjs'
 import { AuthService } from '../services/auth.service'
-import { LOGIN, RedirectService } from '../services/redirect.service'
+import { HOME, RedirectService } from '../services/redirect.service'
 import { APP_INJECTOR } from '../../app.module'
 
 @Injectable({
     providedIn: 'root',
 })
-export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
+export class GuestGuard implements CanActivate, CanActivateChild, CanLoad {
     static async check() {
-        return !!(await APP_INJECTOR.get(AuthService).token)
+        return !(await APP_INJECTOR.get(AuthService).token)
     }
 
     constructor(private readonly auth: AuthService, private readonly redirect: RedirectService) {}
@@ -47,9 +47,9 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanLoad {
 
     public async logic() {
         const isGuest = !(await this.auth.token)
-        if (isGuest) {
-            this.redirect.to(LOGIN, {}, true)
+        if (!isGuest) {
+            this.redirect.to(HOME, {}, true)
         }
-        return !isGuest
+        return isGuest
     }
 }

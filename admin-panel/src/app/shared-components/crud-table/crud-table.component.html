@@ -1,0 +1,64 @@
+<div class='card'>
+    <!-- region toolbar -->
+    <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedRecords()" [disabled]="!selectedRecords?.length"></button>
+        </ng-template>
+    </p-toolbar>
+    <!-- endregion toolbar -->
+    <!-- region table -->
+    <p-table #dt [value]='records' [loading]='loading' [paginator]="true" [rowsPerPageOptions]="[10,25,50]" [rows]='rows' [globalFilterFields]='globalFilterFields' [responsiveLayout]='layout' [(selection)]='selectedRecords' [rowHover]='true' dataKey='id' currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
+        <!-- region caption -->
+        <ng-template pTemplate='caption'>
+            <div class="flex align-items-center justify-content-between">
+                <h5 class="m-0">Manage {{ resourceName }}</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input #search pInputText type="text" (input)="dt.filterGlobal(search.value, 'contains')" placeholder="Search..." />
+                </span>
+            </div>
+        </ng-template>
+        <!-- endregion caption -->
+        <!-- region header -->
+        <ng-template pTemplate='header'>
+            <tr>
+                <th style='width: 3rem;'>
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <ng-container *ngFor='let th of columns'>
+                    <th *ngIf='th.sortable' [pSortableColumn]='th.field'>{{ th.title }} <p-sortIcon [field]='th.field'></p-sortIcon></th>
+                    <th *ngIf='!th.sortable'>{{ th.title }}</th>
+                </ng-container>
+                <th></th>
+            </tr>
+        </ng-template>
+        <!-- endregion header -->
+        <!-- region body -->
+        <ng-template pTemplate='body' let-item>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]='item'></p-tableCheckbox>
+                </td>
+                <ng-container *ngFor='let th of columns'>
+                    <td> {{ th.content ? th.content(item) : item[th.field] }} </td>
+                </ng-container>
+                <td>
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editRecord(item)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteRecord(item)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- endregion body -->
+        <!-- region empty -->
+        <ng-template pTemplate='emptymessage'>
+            <tr>
+                <td [colSpan]='columns.length + 1' [ngStyle]="{'text-align': 'center'}" colspan="{{ columns.length + 2 }}">
+                    <p>No records found</p>
+                </td>
+            </tr>
+        </ng-template>
+        <!-- endregion empty -->
+    </p-table>
+    <!-- endregion table -->
+</div>

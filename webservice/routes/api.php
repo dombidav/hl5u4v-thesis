@@ -54,6 +54,5 @@ Route::group(['middleware' => 'auth'],   function ($router) {
     Route::apiResource('worker', WorkerController::class);
     Route::apiResource('lock_group', LockGroupController::class);
     Route::apiResource('access_rule', AccessRuleController::class);
-    Route::apiResource('log', LogController::class)->except(['store', 'update', 'destroy']);
-
+    Route::apiResource('access_log', LogController::class);
 });

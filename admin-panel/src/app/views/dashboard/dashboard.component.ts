@@ -1,15 +1,6 @@
-import { Component, OnInit } from '@angular/core'
-import { ViewWillEnter } from '@ionic/angular'
+import { Component } from '@angular/core'
 
 @Component({
     templateUrl: 'dashboard.component.html',
 })
-export class DashboardComponent implements ViewWillEnter, OnInit {
-    ngOnInit() {
-        console.log('DashboardComponent.ngOnInit()')
-    }
-
-    ionViewWillEnter() {
-        console.log('DashboardComponent: ionViewWillEnter')
-    }
-}
+export class DashboardComponent {}

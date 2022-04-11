@@ -4,8 +4,8 @@ import { IPageRecord } from '../../../types/page-record.interface'
 import { Route } from '@angular/router'
 import { Location } from '@angular/common'
 
-export const HOME = '/'
-export const LOGIN = '/login'
+export const HOME = '/#/dashboard'
+export const LOGIN = '/#/login'
 
 @Injectable({
     providedIn: 'root',

@@ -4,6 +4,8 @@ import { P404Component } from './views/error/404.component'
 import { P500Component } from './views/error/500.component'
 import { LoginComponent } from './views/login/login.component'
 import { RegisterComponent } from './views/register/register.component'
+import { AuthGuard } from './core/guards/auth.guard'
+import { GuestGuard } from './core/guards/guest.guard'
 
 export const routes: Routes = [
     {
@@ -31,6 +33,9 @@ export const routes: Routes = [
         data: {
             title: 'Login Page',
         },
+        canActivate: [GuestGuard],
+        canLoad: [GuestGuard],
+        canActivateChild: [GuestGuard],
     },
     {
         path: 'register',
@@ -38,10 +43,33 @@ export const routes: Routes = [
         data: {
             title: 'Register Page',
         },
+        canActivate: [GuestGuard],
+        canLoad: [GuestGuard],
+        canActivateChild: [GuestGuard],
+    },
+    {
+        path: 'logout',
+        loadChildren: () => import('./views/logout/logout.module').then((m) => m.LogoutModule),
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
     },
     {
         path: 'dashboard',
         loadChildren: () => import('./views/dashboard/dashboard.module').then((m) => m.DashboardModule),
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
+    {
+        path: 'workers',
+        loadChildren: () => import('./views/workers/workers.module').then((m) => m.WorkersModule),
+        data: {
+            title: 'Workers > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
     },
     { path: '**', component: P404Component },
 ]

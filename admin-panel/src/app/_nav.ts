@@ -1,10 +1,12 @@
 import { INavData } from '@coreui/angular'
-
-export const navItems: INavData[] = [
+import { AuthGuard } from './core/guards/auth.guard'
+import { GuestGuard } from './core/guards/guest.guard'
+const navItems: (INavData & { canActivate?: () => Promise<boolean> })[] = [
     {
         name: 'Dashboard',
         url: '/dashboard',
         icon: 'icon-speedometer',
+        canActivate: AuthGuard.check,
         // badge: {
         //   variant: 'info',
         //   text: 'NEW'
@@ -13,7 +15,70 @@ export const navItems: INavData[] = [
     {
         name: 'Login',
         url: '/login',
-        icon: 'icon-star',
+        icon: 'icon-login',
+        canActivate: GuestGuard.check,
+    },
+    {
+        title: true,
+        name: 'Workers',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Workers',
+        url: '/workers',
+        icon: 'icon-briefcase',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Teams',
+        url: '/teams',
+        icon: 'icon-people',
+        canActivate: AuthGuard.check,
+    },
+    {
+        title: true,
+        name: 'Manage Locks',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Locks',
+        url: '/locks',
+        icon: 'icon-lock',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Lock Groups',
+        url: '/lock-groups',
+        icon: 'icon-organization',
+        canActivate: AuthGuard.check,
+    },
+    {
+        title: true,
+        name: 'Manage Rules',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Rules',
+        url: '/rules',
+        icon: 'icon-shield',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Check logs',
+        url: '/logs',
+        icon: 'icon-book-open',
+        canActivate: AuthGuard.check,
+    },
+    {
+        title: true,
+        name: 'Manage Dashboard',
+        canActivate: AuthGuard.check,
+    },
+    {
+        name: 'Manage Users',
+        url: '/users',
+        icon: 'icon-people',
+        canActivate: AuthGuard.check,
     },
     // {
     //   title: true,
@@ -102,133 +167,6 @@ export const navItems: INavData[] = [
     //   ]
     // },
     // {
-    //   name: 'Buttons',
-    //   url: '/buttons',
-    //   icon: 'icon-cursor',
-    //   children: [
-    //     {
-    //       name: 'Buttons',
-    //       url: '/buttons/buttons',
-    //       icon: 'icon-cursor'
-    //     },
-    //     {
-    //       name: 'Dropdowns',
-    //       url: '/buttons/dropdowns',
-    //       icon: 'icon-cursor'
-    //     },
-    //     {
-    //       name: 'Brand Buttons',
-    //       url: '/buttons/brand-buttons',
-    //       icon: 'icon-cursor'
-    //     }
-    //   ]
-    // },
-    // {
-    //   name: 'Charts',
-    //   url: '/charts',
-    //   icon: 'icon-pie-chart'
-    // },
-    // {
-    //   name: 'Icons',
-    //   url: '/icons',
-    //   icon: 'icon-star',
-    //   children: [
-    //     {
-    //       name: 'CoreUI Icons',
-    //       url: '/icons/coreui-icons',
-    //       icon: 'icon-star',
-    //       badge: {
-    //         variant: 'success',
-    //         text: 'NEW'
-    //       }
-    //     },
-    //     {
-    //       name: 'Flags',
-    //       url: '/icons/flags',
-    //       icon: 'icon-star'
-    //     },
-    //     {
-    //       name: 'Font Awesome',
-    //       url: '/icons/font-awesome',
-    //       icon: 'icon-star',
-    //       badge: {
-    //         variant: 'secondary',
-    //         text: '4.7'
-    //       }
-    //     },
-    //     {
-    //       name: 'Simple Line Icons',
-    //       url: '/icons/simple-line-icons',
-    //       icon: 'icon-star'
-    //     }
-    //   ]
-    // },
-    // {
-    //   name: 'Notifications',
-    //   url: '/notifications',
-    //   icon: 'icon-bell',
-    //   children: [
-    //     {
-    //       name: 'Alerts',
-    //       url: '/notifications/alerts',
-    //       icon: 'icon-bell'
-    //     },
-    //     {
-    //       name: 'Badges',
-    //       url: '/notifications/badges',
-    //       icon: 'icon-bell'
-    //     },
-    //     {
-    //       name: 'Modals',
-    //       url: '/notifications/modals',
-    //       icon: 'icon-bell'
-    //     }
-    //   ]
-    // },
-    // {
-    //   name: 'Widgets',
-    //   url: '/widgets',
-    //   icon: 'icon-calculator',
-    //   badge: {
-    //     variant: 'info',
-    //     text: 'NEW'
-    //   }
-    // },
-    // {
-    //   divider: true
-    // },
-    // {
-    //   title: true,
-    //   name: 'Extras',
-    // },
-    // {
-    //   name: 'Pages',
-    //   url: '/pages',
-    //   icon: 'icon-star',
-    //   children: [
-    //     {
-    //       name: 'Login',
-    //       url: '/login',
-    //       icon: 'icon-star'
-    //     },
-    //     {
-    //       name: 'Register',
-    //       url: '/register',
-    //       icon: 'icon-star'
-    //     },
-    //     {
-    //       name: 'Error 404',
-    //       url: '/404',
-    //       icon: 'icon-star'
-    //     },
-    //     {
-    //       name: 'Error 500',
-    //       url: '/500',
-    //       icon: 'icon-star'
-    //     }
-    //   ]
-    // },
-    // {
     //   name: 'Disabled',
     //   url: '/dashboard',
     //   icon: 'icon-ban',
@@ -239,11 +177,37 @@ export const navItems: INavData[] = [
     //   attributes: { disabled: true },
     // },
     {
+        name: 'Logout',
+        url: '/logout',
+        icon: 'icon-logout',
+        class: 'mt-auto',
+        canActivate: AuthGuard.check,
+    },
+    {
         name: 'Theme by CoreUI',
         url: 'http://coreui.io/angular/',
         icon: 'icon-cloud-download',
-        class: 'mt-auto',
+        // class: 'mt-auto',
         variant: 'success',
         attributes: { target: '_blank', rel: 'noopener' },
     },
 ]
+
+export async function getNavItems(items: (INavData & { canActivate?: () => Promise<boolean> })[] = navItems) {
+    const result: (INavData & { canActivate?: () => Promise<boolean> })[] = []
+    for (const item of items) {
+        if (item.divider) {
+            result.push(item)
+        } else {
+            if (item.canActivate && !(await item.canActivate())) {
+                continue
+            }
+            const navItem = {
+                ...item,
+                children: item.children ? await getNavItems(item.children) : undefined,
+            }
+            result.push(navItem)
+        }
+    }
+    return result
+}

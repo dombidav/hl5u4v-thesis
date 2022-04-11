@@ -20,19 +20,14 @@
         <!--    <li class="nav-item d-md-down-none">-->
         <!--      <a class="nav-link" href="#"><i class="icon-location-pin"></i></a>-->
         <!--    </li>-->
-        <li class="nav-item dropdown" dropdown placement="bottom right">
-            <a
-                class="nav-link"
-                data-toggle="dropdown"
-                href="#"
-                role="button"
-                aria-haspopup="true"
-                aria-expanded="false"
-                dropdownToggle
-                (click)="(false)">
-                <span class="d-none d-md-inline"> {{ user?.name ?? 'Guest' }}</span>
-                <img src="assets/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com" />
-            </a>
+        <li class="nav-item">
+            <span class='nav-link'>
+                <a href='#' class='text-decoration-none text-black-50'>
+                    <span class="d-none d-md-inline"> {{ user?.name ?? 'Guest' }}</span>
+                    <span *ngIf='user'>&nbsp;({{ secondsToHms(remainingTime) }})</span>
+                </a>
+                <img src="assets/img/avatars/6.jpg" class="img-avatar" [alt]='user?.email' />
+            </span>
             <div class="dropdown-menu dropdown-menu-right" *dropdownMenu aria-labelledby="simple-dropdown">
                 <div class="dropdown-header text-center"><strong>Settings</strong></div>
                 <a class="dropdown-item" href="#"><i class="fa fa-user"></i> Profile</a>
@@ -72,7 +67,7 @@
         <!-- /.container-fluid -->
     </main>
 </div>
-<app-footer style="position: absolute; bottom: 0">
+<app-footer style="position: absolute; bottom: 0; right: 0;">
     <span>Admin Panel implemented by Dombi Tibor Dávid (HL5U4V) @ EKKU, 2022 || </span>
     <span> &nbsp; <a href="https://coreui.io">CoreUI</a> &copy; 2022 creativeLabs.</span>
     <span class="ml-auto">&nbsp;Template: <a href="https://coreui.io/angular">CoreUI for Angular</a></span>
