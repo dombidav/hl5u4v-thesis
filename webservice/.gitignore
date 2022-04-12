@@ -3,6 +3,9 @@
 /public/storage
 /storage/*.key
 /vendor
+!/vendor/laravel/sail
+!/vendor/laravel/sail/*
+!/vendor/laravel/sail/**/*
 .env
 .env.backup
 .phpunit.result.cache
