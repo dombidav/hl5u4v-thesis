@@ -5,7 +5,11 @@
   "author": "dombidav",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "postinstall": "node install-wizard.js"
+  },
   "dependencies": {
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "prompt": "^1.3.0"
   }
 }
