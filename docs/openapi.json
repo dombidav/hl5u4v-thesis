@@ -1,0 +1,3839 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Access Control System",
+    "version": "1.0",
+    "summary": "Managed access control system webservice",
+    "description": "This project is a base for a managed access control system built with Laravel 9",
+    "contact": {
+      "name": "Tibor Dombi",
+      "email": "dombidav@gmail.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "Auth"
+    },
+    {
+      "name": "User"
+    },
+    {
+      "name": "Worker"
+    },
+    {
+      "name": "Lock"
+    },
+    {
+      "name": "Ability"
+    },
+    {
+      "name": "Team"
+    },
+    {
+      "name": "LockGroup"
+    },
+    {
+      "name": "Rule"
+    },
+    {
+      "name": "Log"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://justnop.xyz:8080",
+      "description": "Main"
+    }
+  ],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "Registration",
+        "operationId": "post-auth-signup",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User signed up"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "message": "User signed up",
+                      "user": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows a user to register.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Test Man"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "test@test.test"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  },
+                  "password_confirmation": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test Man",
+                    "email": "test@test.test",
+                    "password": "pa$$word",
+                    "password_confirmation": "pa$$word"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "Login",
+        "operationId": "post-auth-signin",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accesstoken": {
+                      "type": "string",
+                      "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwMTo4MDgwL2FwaS9hdXRoL3NpZ25pbiIsImlhdCI6MTY0OTYwOTMxOSwiZXhwIjoxNjQ5NjEyOTE5LCJuYmYiOjE2NDk2MDkzMTksImp0aSI6ImtOTnFoVUEyamV0OUQ2NzUiLCJzdWIiOiI2ZTliZDI3NS00YzI4LTRiNjktYjE1Zi1kZjkxMzVhYjJhZjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.0POyvHgNZVy5A-b9XFvqC7FKE1Y2Yf3YOFtVn76XNDc"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "example": "bearer"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "example": 3600
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "accesstoken": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwMTo4MDgwL2FwaS9hdXRoL3NpZ25pbiIsImlhdCI6MTY0OTYwOTMxOSwiZXhwIjoxNjQ5NjEyOTE5LCJuYmYiOjE2NDk2MDkzMTksImp0aSI6ImtOTnFoVUEyamV0OUQ2NzUiLCJzdWIiOiI2ZTliZDI3NS00YzI4LTRiNjktYjE1Zi1kZjkxMzVhYjJhZjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.0POyvHgNZVy5A-b9XFvqC7FKE1Y2Yf3YOFtVn76XNDc",
+                      "token_type": "bearer",
+                      "expires_in": 3600,
+                      "user": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "email": "user@example.com",
+                    "password": "pa$$word"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "description": "Allows a user to log in.",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Profile",
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "operationId": "get-auth-me",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Allows a user to inspect their own data. Similar to `/user/{userId}` route, where the `{userId}` is of the authenticated user, hovewer with this route, the Webservice automatically resolves the ID. Moreover, this route is available to every user, all permissions are ignored."
+      }
+    },
+    "/auth/token-refresh": {
+      "parameters": [],
+      "post": {
+        "summary": "Token Refresh",
+        "operationId": "post-auth-token-refresh",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwMTo4MDgwL2FwaS9hdXRoL3NpZ25pbiIsImlhdCI6MTY0OTYwOTMxOSwiZXhwIjoxNjQ5NjEyOTE5LCJuYmYiOjE2NDk2MDkzMTksImp0aSI6ImtOTnFoVUEyamV0OUQ2NzUiLCJzdWIiOiI2ZTliZDI3NS00YzI4LTRiNjktYjE1Zi1kZjkxMzVhYjJhZjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.0POyvHgNZVy5A-b9XFvqC7FKE1Y2Yf3YOFtVn76XNDc"
+                    },
+                    "token_type": {
+                      "type": "string",
+                      "example": "bearer",
+                      "enum": [
+                        "basic",
+                        "bearer",
+                        "x-api-key",
+                        "digest",
+                        "hawk",
+                        "AWS4-HMAC-SHA256"
+                      ]
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "example": 3600,
+                      "description": "Token TTL (Time to live) in seconds"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "access_token",
+                    "token_type",
+                    "expires_in",
+                    "user"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4wLjEwMTo4MDgwL2FwaS9hdXRoL3NpZ25pbiIsImlhdCI6MTY0OTYwOTMxOSwiZXhwIjoxNjQ5NjEyOTE5LCJuYmYiOjE2NDk2MDkzMTksImp0aSI6ImtOTnFoVUEyamV0OUQ2NzUiLCJzdWIiOiI2ZTliZDI3NS00YzI4LTRiNjktYjE1Zi1kZjkxMzVhYjJhZjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.0POyvHgNZVy5A-b9XFvqC7FKE1Y2Yf3YOFtVn76XNDc",
+                      "token_type": "bearer",
+                      "expires_in": 3600,
+                      "user": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Allows the user to refresh their access token. This route is available to all authenticated user. Permissions are ignored.",
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/auth/signout": {
+      "post": {
+        "summary": "Logout",
+        "operationId": "post-auth-signout",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User signed out"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "message": "User signed out"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Auth"
+        ],
+        "description": "Invalidates a JWT token by deleting it from storage."
+      }
+    },
+    "/user": {
+      "get": {
+        "summary": "Index Users",
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/User"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                          "name": "Administrator",
+                          "email": "admin@acs.test",
+                          "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                          "createed_at": "2022-04-10T10:13:19.000000Z",
+                          "updated_at": "2022-04-10T10:13:19.000000Z",
+                          "role": [
+                            "admin"
+                          ],
+                          "abilities": [
+                            {
+                              "name": "*",
+                              "title": "All abilities"
+                            }
+                          ],
+                          "forbidden": [
+                            {
+                              "name": "*",
+                              "title": "All abilities"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-user",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all users in database."
+      },
+      "post": {
+        "summary": "Store User",
+        "operationId": "post-user",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates a user. Virtually the same as the `/auth/signup` route.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test",
+                    "email": "test3@email.com",
+                    "password": "secret",
+                    "password_confirmation": "secret"
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test User"
+                  },
+                  "email": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "test.user@acs.test"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "secret"
+                  },
+                  "password_confirmation": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "secret"
+                  }
+                },
+                "required": [
+                  "name",
+                  "email",
+                  "password",
+                  "password_confirmation"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test User",
+                    "email": "test.user@acs.test",
+                    "password": "secret",
+                    "password_confirmation": "secret"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/{userId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "userId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show User",
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "operationId": "get-user-userId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about a user identified by query parameter `userId`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "description": ""
+        }
+      },
+      "patch": {
+        "summary": "Update User",
+        "operationId": "patch-user-userId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+                        "name": "Administrator",
+                        "email": "admin@acs.test",
+                        "email_verified_at": "2022-04-10T10:13:19.000000Z",
+                        "createed_at": "2022-04-10T10:13:19.000000Z",
+                        "updated_at": "2022-04-10T10:13:19.000000Z",
+                        "role": [
+                          "admin"
+                        ],
+                        "abilities": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ],
+                        "forbidden": [
+                          {
+                            "name": "*",
+                            "title": "All abilities"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of a User identified by `{userId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy User",
+        "operationId": "delete-user-userId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "tags": [
+          "User"
+        ],
+        "description": "Removes a User identified by `{userId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/worker": {
+      "get": {
+        "summary": "Index Worker",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Worker"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                          "name": "Helena Trantow",
+                          "rfid": "xb3LvD2oFa0VOY3A",
+                          "birthDate": "1989-09-21",
+                          "telephone": "1-678-718-8356",
+                          "created_at": "2022-04-10T10:13:24.000000Z",
+                          "updated_at": "2022-04-10T10:13:24.000000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-worker",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all workers in database.",
+        "tags": [
+          "Worker"
+        ]
+      },
+      "post": {
+        "summary": "Store Worker",
+        "operationId": "post-worker",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Worker"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                        "name": "Helena Trantow",
+                        "rfid": "xb3LvD2oFa0VOY3A",
+                        "birthDate": "1989-09-21",
+                        "telephone": "1-678-718-8356",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates a worker.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test Worker",
+                    "birthdate": "1998.07.26",
+                    "rfid": "abc123456"
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test Worker"
+                  },
+                  "birthdate": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "date",
+                    "example": "1998-07-26"
+                  },
+                  "rfid": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "abc123456789"
+                  }
+                },
+                "required": [
+                  "name",
+                  "birthdate",
+                  "rfid"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test Worker",
+                    "birthdate": "1998-07-26",
+                    "rfid": "abc123456789"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Worker"
+        ]
+      },
+      "parameters": []
+    },
+    "/worker/{workerId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "workerId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show Worker",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Worker"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                        "name": "Helena Trantow",
+                        "rfid": "xb3LvD2oFa0VOY3A",
+                        "birthDate": "1989-09-21",
+                        "telephone": "1-678-718-8356",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "operationId": "get-worker-workerId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about a worker identified by query parameter `workerId`.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Worker"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                    "name": "Helena Trantow",
+                    "rfid": "xb3LvD2oFa0VOY3A",
+                    "birthDate": "1989-09-21",
+                    "telephone": "1-678-718-8356",
+                    "created_at": "2022-04-10T10:13:24.000000Z",
+                    "updated_at": "2022-04-10T10:13:24.000000Z"
+                  }
+                }
+              }
+            }
+          },
+          "description": ""
+        },
+        "tags": [
+          "Worker"
+        ]
+      },
+      "patch": {
+        "summary": "Update Worker",
+        "operationId": "patch-worker-workerId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Worker"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                        "name": "Helena Trantow",
+                        "rfid": "xb3LvD2oFa0VOY3A",
+                        "birthDate": "1989-09-21",
+                        "telephone": "1-678-718-8356",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of a Worker identified by `{workerId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Worker"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                    "name": "Helena Trantow",
+                    "rfid": "xb3LvD2oFa0VOY3A",
+                    "birthDate": "1989-09-21",
+                    "telephone": "1-678-718-8356",
+                    "created_at": "2022-04-10T10:13:24.000000Z",
+                    "updated_at": "2022-04-10T10:13:24.000000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Worker"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy Worker",
+        "operationId": "delete-worker-workerId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Worker"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+                        "name": "Helena Trantow",
+                        "rfid": "xb3LvD2oFa0VOY3A",
+                        "birthDate": "1989-09-21",
+                        "telephone": "1-678-718-8356",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Removes a Worker identified by `{workerId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": [
+          "Worker"
+        ]
+      }
+    },
+    "/team": {
+      "get": {
+        "summary": "Index Teams",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Team"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Team 1",
+                          "created_at": "2022-04-10T10:13:24.000000Z",
+                          "updated_at": "2022-04-10T10:13:24.000000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-team",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all Teams in database.",
+        "tags": [
+          "Team"
+        ]
+      },
+      "post": {
+        "summary": "Store Team",
+        "operationId": "post-team",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Team 1",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates a Team.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test Worker",
+                    "birthdate": "1998.07.26",
+                    "rfid": "abc123456"
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test Team"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test Team"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Team"
+        ]
+      },
+      "parameters": []
+    },
+    "/team/{teamId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "teamId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show Team",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Team 1",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-team-teamId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about a Team identified by query parameter `teamId`.",
+        "tags": [
+          "Team"
+        ]
+      },
+      "patch": {
+        "summary": "Update Team",
+        "operationId": "patch-team-teamId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Team 1",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of a Team identified by `{teamId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Team"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": 1,
+                    "name": "Team 1",
+                    "created_at": "2022-04-10T10:13:24.000000Z",
+                    "updated_at": "2022-04-10T10:13:24.000000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Team"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy Team",
+        "operationId": "delete-team-teamId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Team"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Team 1",
+                        "created_at": "2022-04-10T10:13:24.000000Z",
+                        "updated_at": "2022-04-10T10:13:24.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Removes a Team identified by `{teamId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": [
+          "Team"
+        ]
+      }
+    },
+    "/team-control": {
+      "post": {
+        "summary": "Attach Worker to Team",
+        "operationId": "post-team-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Assigns a Worker to a Team.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "worker_id": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "team_id": 6
+                  }
+                },
+                "properties": {
+                  "worker_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "format": "uuid"
+                  },
+                  "team_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "worker_id",
+                  "team_id"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "worker_id": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "team_id": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Team",
+          "Worker"
+        ]
+      },
+      "parameters": [],
+      "delete": {
+        "summary": "Detach Worker from Team",
+        "operationId": "delete-team-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Removes a Worker from a Team.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "worker_id": "000da123-9321-45ed-9efb-d7c69b734763",
+                    "team_id": 3
+                  }
+                },
+                "properties": {
+                  "worker_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "uuid",
+                    "example": "000da123-9321-45ed-9efb-d7c69b734763"
+                  },
+                  "team_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "example": 3
+                  }
+                },
+                "required": [
+                  "worker_id",
+                  "team_id"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "worker_id": "000da123-9321-45ed-9efb-d7c69b734763",
+                    "team_id": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Team",
+          "Worker"
+        ]
+      }
+    },
+    "/lock": {
+      "get": {
+        "summary": "Index Lock",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Lock"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Office Building 1",
+                          "status": 2,
+                          "device_key": "pSn3MoWOOM",
+                          "created_at": "2022-04-10T10:13:25.000000Z",
+                          "updated_at": "2022-04-10T10:13:25.000000Z",
+                          "statusText": "open"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-lock",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all Locks in database.",
+        "tags": [
+          "Lock"
+        ]
+      },
+      "post": {
+        "summary": "Store Lock",
+        "operationId": "post-lock",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Office Building 1",
+                        "status": 2,
+                        "device_key": "pSn3MoWOOM",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z",
+                        "statusText": "open"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates a Lock.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test lock",
+                    "device_key": "abc123456",
+                    "status": 1
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test lock"
+                  },
+                  "device_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "abc123456"
+                  },
+                  "status": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "name",
+                  "device_key",
+                  "status"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test lock",
+                    "device_key": "abc123456",
+                    "status": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Lock"
+        ]
+      },
+      "parameters": []
+    },
+    "/lock/{lockId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "lockId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show Lock",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Office Building 1",
+                        "status": 2,
+                        "device_key": "pSn3MoWOOM",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z",
+                        "statusText": "open"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-lock-lockId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about a Lock identified by query parameter `lockId`.",
+        "tags": [
+          "Lock"
+        ]
+      },
+      "patch": {
+        "summary": "Update Lock",
+        "operationId": "patch-lock-lockId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Office Building 1",
+                        "status": 2,
+                        "device_key": "pSn3MoWOOM",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z",
+                        "statusText": "open"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of a Lock identified by `{lockId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lock"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": 1,
+                    "name": "Office Building 1",
+                    "status": 2,
+                    "device_key": "pSn3MoWOOM",
+                    "created_at": "2022-04-10T10:13:25.000000Z",
+                    "updated_at": "2022-04-10T10:13:25.000000Z",
+                    "statusText": "open"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Lock"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy Lock",
+        "operationId": "delete-lock-lockId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Office Building 1",
+                        "status": 2,
+                        "device_key": "pSn3MoWOOM",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z",
+                        "statusText": "open"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Removes a Lock identified by `{lockId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": [
+          "Lock"
+        ]
+      }
+    },
+    "/lock_group": {
+      "get": {
+        "summary": "Index LockGroup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Lock-Group"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Lock Group 1",
+                          "created_at": "2022-04-10T10:13:25.000000Z",
+                          "updated_at": "2022-04-10T10:13:25.000000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-lock-group",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all LockGroups in database.",
+        "tags": [
+          "LockGroup"
+        ]
+      },
+      "post": {
+        "summary": "Store LockGroup",
+        "operationId": "post-lock-group",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock-Group"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Lock Group 1",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates a LockGroup.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test group"
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test group"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test group"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "LockGroup"
+        ]
+      },
+      "parameters": []
+    },
+    "/lock_group/{lock-groupId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "lock-groupId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show LockGroup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock-Group"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Lock Group 1",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-lock-group-lock-groupId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about a LockGroup identified by query parameter `lock-groupId`.",
+        "tags": [
+          "LockGroup"
+        ]
+      },
+      "patch": {
+        "summary": "Update LockGroup",
+        "operationId": "patch-lock-group-lock-groupId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock-Group"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Office Building 1",
+                        "status": 2,
+                        "device_key": "pSn3MoWOOM",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z",
+                        "statusText": "open"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of a LockGroup identified by `{lock-groupId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Lock-Group"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": 1,
+                    "name": "Lock Group 1",
+                    "created_at": "2022-04-10T10:13:25.000000Z",
+                    "updated_at": "2022-04-10T10:13:25.000000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "LockGroup"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy LockGroup",
+        "operationId": "delete-lock-group-lock-groupId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Lock-Group"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Lock Group 1",
+                        "created_at": "2022-04-10T10:13:25.000000Z",
+                        "updated_at": "2022-04-10T10:13:25.000000Z"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Removes a LockGroup identified by `{lock-groupId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": [
+          "LockGroup"
+        ]
+      }
+    },
+    "/lock-control": {
+      "post": {
+        "summary": "Attach Lock to LockGroup",
+        "operationId": "post-lock-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Assigns a Lock to a LockGroup.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "worker_id": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "team_id": 6
+                  }
+                },
+                "properties": {
+                  "lock_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "format": "uuid"
+                  },
+                  "lock_group_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "lock_id",
+                  "lock_group_id"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "lock_id": "fde7c893-10dc-42d5-900d-195ff742a78a",
+                    "lock_group_id": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Lock",
+          "LockGroup"
+        ]
+      },
+      "parameters": [],
+      "delete": {
+        "summary": "Detach a Lock from a LockGroup",
+        "operationId": "delete-lock-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Removes a Lock from a LockGroup.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "worker_id": "000da123-9321-45ed-9efb-d7c69b734763",
+                    "team_id": 3
+                  }
+                },
+                "properties": {
+                  "lock_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "format": "uuid",
+                    "example": "000da123-9321-45ed-9efb-d7c69b734763"
+                  },
+                  "lock_group_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "example": 3
+                  }
+                },
+                "required": [
+                  "lock_id",
+                  "lock_group_id"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "lock_id": "000da123-9321-45ed-9efb-d7c69b734763",
+                    "lock_group_id": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Lock",
+          "LockGroup"
+        ]
+      }
+    },
+    "/access_rule": {
+      "get": {
+        "summary": "Index AccessRule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "uniqueItems": true,
+                      "items": {
+                        "$ref": "#/components/schemas/Rule"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "name": "Doloremque",
+                          "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                          "definition": {
+                            "from": "23:41:58.000",
+                            "until": "13:20:14.000",
+                            "action": "forbid",
+                            "onDays": [
+                              1
+                            ]
+                          },
+                          "created_at": "2022-04-10T10:13:26.000000Z",
+                          "updated_at": "2022-04-10T10:13:26.000000Z",
+                          "isAllowing": true
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-access-rule",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Returns all AccessRule in database.",
+        "tags": [
+          "Rule"
+        ]
+      },
+      "post": {
+        "summary": "Store AccessRule",
+        "operationId": "post-access-rule",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Rule"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Doloremque",
+                        "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                        "definition": {
+                          "from": "23:41:58.000",
+                          "until": "13:20:14.000",
+                          "action": "forbid",
+                          "onDays": [
+                            1
+                          ]
+                        },
+                        "created_at": "2022-04-10T10:13:26.000000Z",
+                        "updated_at": "2022-04-10T10:13:26.000000Z",
+                        "isAllowing": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Creates an AccessRule.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "",
+                "type": "object",
+                "x-examples": {
+                  "example-1": {
+                    "name": "Test",
+                    "description": "Some long text",
+                    "definition": {
+                      "on": "2021-04-08",
+                      "action": "allow"
+                    }
+                  }
+                },
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test"
+                  },
+                  "description": {
+                    "type": "string",
+                    "minLength": 1,
+                    "example": "Test description"
+                  },
+                  "definition": {
+                    "type": "object",
+                    "required": [
+                      "on",
+                      "action"
+                    ],
+                    "properties": {
+                      "on": {
+                        "type": "string",
+                        "minLength": 1,
+                        "example": "2021-04-08"
+                      },
+                      "action": {
+                        "type": "string",
+                        "minLength": 1,
+                        "example": "allow"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "definition"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "name": "Test",
+                    "description": "Test description",
+                    "definition": {
+                      "on": "2021-04-08",
+                      "action": "allow"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rule"
+        ]
+      },
+      "parameters": []
+    },
+    "/access_rule/{access-ruleId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "access-ruleId",
+          "in": "path",
+          "required": true
+        }
+      ],
+      "get": {
+        "summary": "Show AccessRule",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Rule"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Doloremque",
+                        "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                        "definition": {
+                          "from": "23:41:58.000",
+                          "until": "13:20:14.000",
+                          "action": "forbid",
+                          "onDays": [
+                            1
+                          ]
+                        },
+                        "created_at": "2022-04-10T10:13:26.000000Z",
+                        "updated_at": "2022-04-10T10:13:26.000000Z",
+                        "isAllowing": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "operationId": "get-access-rule-access-ruleId",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "description": "Shows detailed information about an AccessRule identified by query parameter `access-ruleId`.",
+        "tags": [
+          "Rule"
+        ]
+      },
+      "patch": {
+        "summary": "Update AccessRule",
+        "operationId": "patch-access-rule-access-ruleId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Rule"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Doloremque",
+                        "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                        "definition": {
+                          "from": "23:41:58.000",
+                          "until": "13:20:14.000",
+                          "action": "forbid",
+                          "onDays": [
+                            1
+                          ]
+                        },
+                        "created_at": "2022-04-10T10:13:26.000000Z",
+                        "updated_at": "2022-04-10T10:13:26.000000Z",
+                        "isAllowing": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Allows the modification of an AccessRule identified by `{access-ruleId}`. This endpoint is also triggered when using PUT method on this URI. Returns the updated resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Rule"
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "id": 1,
+                    "name": "Doloremque",
+                    "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                    "definition": {
+                      "from": "23:41:58.000",
+                      "until": "13:20:14.000",
+                      "action": "forbid",
+                      "onDays": [
+                        1
+                      ]
+                    },
+                    "created_at": "2022-04-10T10:13:26.000000Z",
+                    "updated_at": "2022-04-10T10:13:26.000000Z",
+                    "isAllowing": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rule"
+        ]
+      },
+      "delete": {
+        "summary": "Destroy AccessRule",
+        "operationId": "delete-access-rule-access-ruleId",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Rule"
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": {
+                        "id": 1,
+                        "name": "Doloremque",
+                        "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+                        "definition": {
+                          "from": "23:41:58.000",
+                          "until": "13:20:14.000",
+                          "action": "forbid",
+                          "onDays": [
+                            1
+                          ]
+                        },
+                        "created_at": "2022-04-10T10:13:26.000000Z",
+                        "updated_at": "2022-04-10T10:13:26.000000Z",
+                        "isAllowing": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Removes an AccessRule identified by `{access-ruleId}`. Returns the deleted resource.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "tags": [
+          "Rule"
+        ]
+      }
+    },
+    "/rule-control": {
+      "post": {
+        "summary": "Attach AccesRule to Team and LockGroup",
+        "operationId": "post-rule-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Links a Team and a LockGroup with an AccessRule",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "",
+                "x-examples": {
+                  "example-1": {
+                    "access_rule_id": 50,
+                    "team_id": 5,
+                    "lock_group": 5
+                  }
+                },
+                "minProperties": 0,
+                "additionalProperties": false,
+                "properties": {
+                  "access_rule_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "example": 10
+                  },
+                  "team_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "example": 2
+                  },
+                  "lock_group": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "example": 4
+                  }
+                },
+                "required": [
+                  "access_rule_id",
+                  "team_id",
+                  "lock_group"
+                ]
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "access_rule_id": 10,
+                    "team_id": 2,
+                    "lock_group": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Lock",
+          "LockGroup"
+        ]
+      },
+      "parameters": [],
+      "delete": {
+        "summary": "Detach AccesRule from Team and LockGroup",
+        "operationId": "delete-rule-control",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          }
+        },
+        "description": "Removes the link between a Team, a LockGroup and an AccessRule. Non of the resources are deleted.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "",
+                "x-examples": {
+                  "example-1": {
+                    "access_rule_id": 50,
+                    "team_id": 5,
+                    "lock_group": 5
+                  }
+                },
+                "additionalProperties": false,
+                "properties": {
+                  "access_rule_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "team_id": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "lock_group": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
+                },
+                "required": [
+                  "access_rule_id",
+                  "team_id",
+                  "lock_group"
+                ]
+              },
+              "examples": {}
+            }
+          }
+        },
+        "tags": [
+          "LockGroup",
+          "Team",
+          "Rule"
+        ]
+      }
+    },
+    "/access/{lockId}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "lockId",
+          "in": "path",
+          "required": true,
+          "description": "The id of the Lock which requested the authorization"
+        }
+      ],
+      "post": {
+        "summary": "Access",
+        "operationId": "post-access-lockId",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "type": "object",
+                  "x-examples": {
+                    "example-1": {
+                      "action": "allow"
+                    }
+                  },
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "minLength": 1,
+                      "example": "allow"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity (WebDAV)"
+          },
+          "423": {
+            "description": "Locked (WebDAV)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "example": "forbid"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Rule"
+        ],
+        "description": "Authorizes a worker through a lock, identified by query parameter `{lockId}`. The authentication of the lock can be done with either JWT (prefered) or the X-API-KEY header",
+        "security": [
+          {
+            "JWT": []
+          },
+          {
+            "X-API-KEY": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "minProperties": 1,
+                "maxProperties": 1,
+                "properties": {
+                  "worker_rfid": {
+                    "type": "string",
+                    "example": "b713-bd9f3bd77241"
+                  },
+                  "worker_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "af61378f-c21b-4535-8bdd-33efec5828d1"
+                  },
+                  "worker_auth": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                      "email": {
+                        "type": "string"
+                      },
+                      "password": {
+                        "type": "string",
+                        "example": "secret",
+                        "minLength": 8
+                      },
+                      "binary": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "example-1": {
+                  "value": {
+                    "worker_rfid": "b713-bd9f3bd77241"
+                  }
+                }
+              }
+            }
+          },
+          "description": "This body is very flexible, and allows the use of multiple identification methods, such as RFID, ID, email & password, binary etc. This identification is called a *fingerprint*."
+        }
+      }
+    },
+    "/access_log": {
+      "get": {
+        "summary": "Index Log",
+        "tags": [
+          "Log"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Log"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "example-1": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": 1,
+                          "event": "entry",
+                          "action": "allow",
+                          "worker_id": "d65d344e-d472-492c-91c0-6cb350aad41f",
+                          "lock_id": 32,
+                          "rule_id": 0,
+                          "created_at": "2022-04-10T10:13:27.000000Z",
+                          "updated_at": "2022-04-10T10:13:27.000000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "operationId": "get-log",
+        "description": "Returns all logged entries.",
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "parameters": []
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "type": "object",
+        "description": "Represents a user that can log in to the application.",
+        "examples": [
+          {
+            "id": "6e9bd275-4c28-4b69-b15f-df9135ab2af1",
+            "name": "Administrator",
+            "email": "admin@acs.test",
+            "email_verified_at": "2022-04-10T10:13:19.000000Z",
+            "createed_at": "2022-04-10T10:13:19.000000Z",
+            "updated_at": "2022-04-10T10:13:19.000000Z",
+            "role": [
+              "admin"
+            ],
+            "abilities": [
+              {
+                "name": "*",
+                "title": "All abilities"
+              }
+            ],
+            "forbidden": [
+              {
+                "name": "*",
+                "title": "All abilities"
+              }
+            ]
+          }
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the given user.",
+            "example": "6e9bd275-4c28-4b69-b15f-df9135ab2af1"
+          },
+          "name": {
+            "type": "string",
+            "example": "Administrator"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "admin@acs.test"
+          },
+          "email_verified_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:19.000000Z"
+          },
+          "createed_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date that the user was created.",
+            "example": "2022-04-10T10:13:19.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:19.000000Z"
+          },
+          "role": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "admin"
+            }
+          },
+          "abilities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ability"
+            }
+          },
+          "forbidden": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ability"
+            }
+          }
+        }
+      },
+      "Ability": {
+        "title": "Ability",
+        "type": "object",
+        "description": "Represents an ability used for authorization.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "*"
+          },
+          "title": {
+            "type": "string",
+            "example": "All abilities"
+          }
+        }
+      },
+      "Worker": {
+        "title": "Worker",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "05b8cb89-5e76-47f8-8ea0-06849d810af7"
+          },
+          "name": {
+            "type": "string",
+            "example": "Helena Trantow"
+          },
+          "rfid": {
+            "type": "string",
+            "example": "xb3LvD2oFa0VOY3A"
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date",
+            "example": "1989-09-21"
+          },
+          "telephone": {
+            "type": "string",
+            "example": "1-678-718-8356"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:24.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:24.000000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "rfid",
+          "birthDate",
+          "telephone"
+        ],
+        "examples": [
+          {
+            "id": "05b8cb89-5e76-47f8-8ea0-06849d810af7",
+            "name": "Helena Trantow",
+            "rfid": "xb3LvD2oFa0VOY3A",
+            "birthDate": "1989-09-21",
+            "telephone": "1-678-718-8356",
+            "created_at": "2022-04-10T10:13:24.000000Z",
+            "updated_at": "2022-04-10T10:13:24.000000Z"
+          }
+        ],
+        "description": "Represents a worker with an rfid."
+      },
+      "Lock": {
+        "title": "Lock",
+        "type": "object",
+        "examples": [
+          {
+            "id": 1,
+            "name": "Office Building 1",
+            "status": 2,
+            "device_key": "pSn3MoWOOM",
+            "created_at": "2022-04-10T10:13:25.000000Z",
+            "updated_at": "2022-04-10T10:13:25.000000Z",
+            "statusText": "open"
+          }
+        ],
+        "description": "Represents a physical lock.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Office Building 1"
+          },
+          "status": {
+            "type": "integer",
+            "example": 2
+          },
+          "device_key": {
+            "type": "string",
+            "example": "pSn3MoWOOM"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:25.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:25.000000Z"
+          },
+          "statusText": {
+            "type": "string",
+            "example": "open"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "status",
+          "device_key"
+        ]
+      },
+      "Team": {
+        "title": "Team",
+        "type": "object",
+        "examples": [
+          {
+            "id": 1,
+            "name": "Team 1",
+            "created_at": "2022-04-10T10:13:24.000000Z",
+            "updated_at": "2022-04-10T10:13:24.000000Z"
+          }
+        ],
+        "description": "Represent a group of workers.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Team 1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:24.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:24.000000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Lock-Group": {
+        "title": "Lock-Group",
+        "type": "object",
+        "examples": [
+          {
+            "id": 1,
+            "name": "Lock Group 1",
+            "created_at": "2022-04-10T10:13:25.000000Z",
+            "updated_at": "2022-04-10T10:13:25.000000Z"
+          }
+        ],
+        "description": "Represents a group of locks.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Lock Group 1"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:25.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:25.000000Z"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Rule": {
+        "title": "Rule",
+        "type": "object",
+        "examples": [
+          {
+            "id": 1,
+            "name": "Doloremque",
+            "description": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam.",
+            "definition": {
+              "from": "23:41:58.000",
+              "until": "13:20:14.000",
+              "action": "forbid",
+              "onDays": [
+                1
+              ]
+            },
+            "created_at": "2022-04-10T10:13:26.000000Z",
+            "updated_at": "2022-04-10T10:13:26.000000Z",
+            "isAllowing": true
+          }
+        ],
+        "description": "Defines if- and when a team is allowed throught any lock in a specific lock group.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Doloremque"
+          },
+          "description": {
+            "type": "string",
+            "example": "Soluta quae sed odio dolor velit consequatur natus. Illo asperiores voluptates reprehenderit consequatur. Quas accusantium excepturi aut et dolor sed magnam."
+          },
+          "definition": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "time",
+                "example": "23:41:58.000"
+              },
+              "until": {
+                "type": "string",
+                "format": "time",
+                "example": "13:20:14.000"
+              },
+              "action": {
+                "type": "string",
+                "example": "forbid"
+              },
+              "onDays": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:26.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:26.000000Z"
+          },
+          "isAllowing": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ]
+      },
+      "Log": {
+        "title": "Log",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "event": {
+            "type": "string",
+            "example": "entry"
+          },
+          "action": {
+            "type": "string",
+            "example": "allow"
+          },
+          "worker_id": {
+            "type": "string",
+            "example": "d65d344e-d472-492c-91c0-6cb350aad41f"
+          },
+          "lock_id": {
+            "type": "integer",
+            "example": 32
+          },
+          "rule_id": {
+            "type": "integer"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:27.000000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-04-10T10:13:27.000000Z"
+          }
+        },
+        "required": [
+          "id",
+          "event",
+          "action"
+        ],
+        "examples": [
+          {
+            "id": 1,
+            "event": "entry",
+            "action": "allow",
+            "worker_id": "d65d344e-d472-492c-91c0-6cb350aad41f",
+            "lock_id": 32,
+            "rule_id": 0,
+            "created_at": "2022-04-10T10:13:27.000000Z",
+            "updated_at": "2022-04-10T10:13:27.000000Z"
+          }
+        ],
+        "description": "Represents access attemps wether they were successfull or not."
+      }
+    },
+    "securitySchemes": {
+      "JWT": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [
+    {
+      "JWT": []
+    }
+  ]
+}
