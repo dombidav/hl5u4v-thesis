@@ -1,0 +1,18 @@
+{
+    "name": "hl5u4v/thesis",
+    "description": "Webservice for Managed Access Control Systems. Thesis work of Dombi Tibor D\u0000vid (HL5U4V) in EKKE, Hungary, 2022",
+    "type": "project",
+    "license": "MIT",
+    "scripts": {
+        "post-install-cmd": "cd webservice && composer install && cd ..",
+        "post-update-cmd": "cd webservice && composer update && cd .."
+    },
+    "authors": [
+        {
+            "name": "Dombi Tibor David",
+            "email": "dombidav@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}

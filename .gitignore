@@ -80,3 +80,5 @@ src/web-service/public/js/app.js
 node_modules/
 
 *.log
+
+vendor/

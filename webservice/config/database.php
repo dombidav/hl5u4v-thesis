@@ -1,6 +1,12 @@
-<?php
+<?php /** @noinspection PhpUndefinedVariableInspection */
 
 use Illuminate\Support\Str;
+
+$use_url = false;
+if(env('DATABASE_URL')) {
+    $use_url = true;
+    $DATABASE_URL = parse_url(env('DATABASE_URL', 'http://localhost:3306'));
+}
 
 return [
 
@@ -66,16 +72,16 @@ return [
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'host' => $use_url ? $DATABASE_URL['host'] : env('DB_HOST', '127.0.0.1'),
+            'port' => $use_url ? $DATABASE_URL['port'] : env('DB_PORT', '5432'),
+            'database' => $use_url ? ltrim($DATABASE_URL["path"], "/") : env('DB_DATABASE', 'forge'),
+            'username' => $use_url ? $DATABASE_URL['user'] : env('DB_USERNAME', 'forge'),
+            'password' => $use_url ? $DATABASE_URL['pass'] : env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
-            'sslmode' => 'prefer',
+            'sslmode' => $use_url ? 'require' : 'prefer',
         ],
 
         'sqlsrv' => [
@@ -119,7 +125,7 @@ return [
 
     'redis' => [
 
-        'client' => env('REDIS_CLIENT', 'phpredis'),
+        'client' => env('REDIS_CLIENT', 'predis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
