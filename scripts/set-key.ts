@@ -1,8 +1,8 @@
-const fs = require('fs')
+import fs from 'fs'
 const fsp = fs.promises
 const envFile = `${__dirname}/../.env`
 
-main()
+main().then((exitCode) => process.exit(exitCode))
 
 function generateKey() {
     let result = ''
@@ -17,7 +17,7 @@ function generateKey() {
     return result
 }
 
-function replaceKey(env) {
+function replaceKey(env: string) {
     return env.replace(/^APP_KEY=(.+)?$/gmi, `APP_KEY=base64:${generateKey()}`)
 }
 
@@ -28,4 +28,5 @@ async function main() {
     const env = await fsp.readFile(envFile, 'utf8')
     await fsp.writeFile(envFile, replaceKey(env), 'utf8')
     console.log('Done!')
+    return 0
 }

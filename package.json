@@ -4,20 +4,35 @@
   "repository": "https://github.com/dombidav/hl5u4v-thesis.git",
   "author": "Dombi Tibor <dombidav@gmail.com>",
   "scripts": {
-    "env:generate": "node scripts/env-generate.js",
-    "install:scripts": "cd scripts && yarn",
+    "env:generate": "yarn ts scripts/env-generate.ts",
     "install:api": "cd webservice && composer install",
     "install:admin": "cd admin-panel && yarn",
-    "install:docker": "docker-compose up --no-start --abort-on-container-exit",
-    "install:database": "yarn start -d && yarn run:api migrate:fresh --seed",
-    "set:key": "node scripts/set-key.js",
-    "postinstall": "yarn install:scripts && yarn env:generate && yarn install:api && yarn install:admin && yarn install:docker && yarn install:database",
-    "start": "docker-compose up",
-    "run:api": "node scripts/run-in-container.js api",
-    "run:ui": "node scripts/run-in-container.js ui",
+    "install:database": "yarn run:api migrate:fresh --seed",
+    "set:key": "yarn ts scripts/set-key.ts",
+    "run:api": "yarn ts scripts/run-in-container.ts api",
+    "run:ui": "yarn ts scripts/run-in-container.ts ui",
     "api": "yarn run:api",
-    "ui": "yarn run:ui"
+    "ui": "yarn run:ui",
+    "ts": "node --experimental-specifier-resolution=node --loader ts-node/esm --no-warnings"
+  },
+  "engines": {
+    "yarn": ">= 1.19.1",
+    "node": ">= 14.0"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^8.2.1",
+    "@types/node": "^17.0.31",
+    "@types/semver": "^7.3.9",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
   },
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "chalk": "4.1.2",
+    "dotenv": "^16.0.0",
+    "inquirer": "^8.2.4",
+    "nanospinner": "^1.1.0",
+    "semver": "^7.3.7"
+  }
 }

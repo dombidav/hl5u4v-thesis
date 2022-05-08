@@ -1,16 +1,16 @@
-#!/usr/bin/env node
-const fs = require('fs')
+import fs from 'fs'
+import {config} from 'dotenv'
 const fsp = fs.promises
-require('dotenv').config()
+config()
 
-
-main().then()
+main().then(exitCode => process.exit(exitCode))
 
 async function main() {
     console.log('Generating environment variables...')
     await copyEnv()
     await createEnvTS()
     console.log('Done! ✓✓✓')
+    return 0
 }
 
 
@@ -30,7 +30,7 @@ async function copyEnv() {
 async function createEnvTS() {
     console.log('> Creating environment.ts for admin-panel...')
     const properties = ['APP_URL']
-    const res = {production: process.env.APP_ENV === 'production'}
+    const res: {[key: string]: any} = {production: process.env.APP_ENV === 'production'}
     console.log('> env.ts will be created with the following properties: APP_ENV, ', properties.join(', '))
     for(const prop of properties) {
         res[prop] = process.env[prop]
