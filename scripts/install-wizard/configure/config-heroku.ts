@@ -12,7 +12,8 @@ export async function configHeroku(config: IConfig) {
             type: 'input',
             name: 'appName',
             message: 'Enter the name of the Heroku app',
-            default: config.app.name
+            default: config.app.name,
+            transformer: (input: string, answers: Partial<IHerokuConfig>) => input.trim().toLowerCase().replace(/[_.]/g, '-'),
         },
         {
             type: 'list',

@@ -99,16 +99,23 @@ export function getSteps(config: IConfig) {
         })
         steps.push({
             name: 'Deploy to Heroku',
-            action: async () => cmdlet(`git push heroku master`)
+            action: async () => {
+                try {
+                    return cmdlet(`git push heroku master`);
+                } catch (__) {
+                    return cmdlet(`git push heroku main`);
+                }
+            }
         })
         steps.push({
             name: 'Set up Heroku environment variables',
             action: async () => {
+                const skips = [/APP_ENV/g, /APP_URL/g, /JWT_SECRET/g, /DB_[A-Z]+/g, /REDIS_[A-Z]+/g, /MAIL_[A-Z]+/g,]
                 const env = (await promises.readFile('.env')).toString()
                 for (const line of env.split('\n')) {
-                    if (line.startsWith('#') || !line.includes('=')) continue
+                    if (line.startsWith('#')) continue
                     const [key, value] = line.split('=').map(s => s.trim().replace(/^"|"$/g, ''))
-                    if(!key || !value) continue
+                    if(!key || !value || skips.some(pattern => pattern.test(value))) continue
                      cmdlet(`heroku config:set ${key}=${value} -a ${config.heroku?.appName}`)
                          .then(() => console.log(`Set ${key}=${value}`))
                 }
