@@ -20,6 +20,14 @@ class Worker extends Model
         'birthdate'
     ];
 
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+    public $incrementing = false;
+
+    protected $casts = [
+        'id' => 'string'
+    ];
+
     public function teams(){
         return $this->belongsToMany(Team::class);
     }
