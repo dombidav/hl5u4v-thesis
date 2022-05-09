@@ -75,22 +75,6 @@ export function getSteps(config: IConfig) {
         })
     }
 
-    if (config.services.includes('gh-actions')) {
-        steps.push({
-            name: 'Add GitHub Actions config',
-            action: async () => {
-                mkdirSync(join('.github', 'workflows'), {recursive: true})
-                return await promises.writeFile(
-                    join('.github', 'workflows', 'laravel.yml'),
-                    await promises.readFile(
-                        './scripts/install-wizard/install/gh-config.cli-template'
-                    )
-                )
-            }
-        })
-        steps.push(commit('Added GitHub Actions config'))
-    }
-
     if (config.services.includes('heroku')) {
         steps.push({
             name: 'Create Heroku app',

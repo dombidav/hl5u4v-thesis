@@ -25,10 +25,6 @@ export async function chooseServices() {
                     value: 'git'
                 },
                 {
-                    name: 'Github Actions',
-                    value: 'ghActions',
-                },
-                {
                     name: 'Heroku',
                     value: 'heroku',
                 }

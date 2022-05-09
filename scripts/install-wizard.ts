@@ -10,7 +10,6 @@ import {chooseServices} from './install-wizard/configure/choose-services'
 import {configMail} from './install-wizard/configure/config-mail'
 import {configGit} from './install-wizard/configure/config-git'
 import {configFactory, IConfig,} from './install-wizard/config.interface'
-import {configGhActions} from './install-wizard/configure/config-gh-actions'
 import {configHeroku} from './install-wizard/configure/config-heroku'
 import {configApp} from "./install-wizard/configure/config-app";
 import chalk from "chalk";
@@ -55,8 +54,6 @@ async function getConfiguration() {
         config.mailer = await configMail()
     if (config.services.includes('git'))
         config.git = await configGit()
-    if (config.services.includes('ghActions'))
-        config = await configGhActions(config)
     if (config.services.includes('heroku'))
         config.heroku = await configHeroku(config)
     const prerequisites = await checkPrerequisites(config)
