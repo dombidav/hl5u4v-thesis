@@ -29,7 +29,11 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
+    protected $primaryKey = 'id';
+    protected $keyType = 'string';
+
     protected $casts = [
+        'id' => 'string',
         'email_verified_at' => 'datetime',
     ];
 
