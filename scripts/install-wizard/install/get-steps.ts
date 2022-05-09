@@ -1,9 +1,8 @@
-import {IConfig} from "../config.interface";
-import {mkdirSync, promises} from "fs";
-import {writeEnv} from "./write-env";
-import {cmdlet} from "../../utils/cmdlet.tools";
-import { join } from "path";
-import {getEnv} from "../../utils/object.tools";
+import {IConfig} from '../config.interface'
+import {promises} from 'fs'
+import {writeEnv} from './write-env'
+import {cmdlet} from '../../utils/cmdlet.tools'
+import { join } from 'path'
 
 const VARIABLE_REGEX = /@@([a-zA-Z0-9_.-]+)(?: \?\? )?(.+)?@@/gmi
 
@@ -11,7 +10,7 @@ function commit(commitMessage: string) {
     return {
         name: 'Commit changes',
         action: async () => cmdlet(`git add . && git commit -m "${commitMessage}"`)
-    };
+    }
 }
 
 export function getSteps(config: IConfig) {
@@ -82,17 +81,17 @@ export function getSteps(config: IConfig) {
         })
         steps.push({
             name: 'Add heroku/php buildpack',
-            action: async () => cmdlet(`heroku buildpacks:add heroku/php`)
+            action: async () => cmdlet(`heroku buildpacks:add heroku/php -a ${config.heroku?.appName}`)
         })
         if(config.redis?.host) {
             steps.push({
                 name: 'Add heroku/redis addon',
-                action: async () => cmdlet(`heroku addons:create redis:hobby-dev`)
+                action: async () => cmdlet(`heroku addons:create redis:hobby-dev -a ${config.heroku?.appName}`)
             })
         }
         steps.push({
             name: `Add ${config.heroku?.databaseAddon ?? ''} addon`,
-            action: async () => cmdlet(`heroku addons:create ${config.heroku?.databaseAddon ?? ''}`)
+            action: async () => cmdlet(`heroku addons:create ${config.heroku?.databaseAddon ?? ''} -a ${config.heroku?.appName}`)
         })
         steps.push({
             name: 'Add heroku remote',
@@ -101,6 +100,19 @@ export function getSteps(config: IConfig) {
         steps.push({
             name: 'Deploy to Heroku',
             action: async () => cmdlet(`git push heroku master`)
+        })
+        steps.push({
+            name: 'Set up Heroku environment variables',
+            action: async () => {
+                const env = (await promises.readFile('.env')).toString()
+                for (const line of env.split('\n')) {
+                    if (line.startsWith('#') || !line.includes('=')) continue
+                    const [key, value] = line.split('=').map(s => s.trim().replace(/^"|"$/g, ''))
+                    if(!key || !value) continue
+                     cmdlet(`heroku config:set ${key}=${value} -a ${config.heroku?.appName}`)
+                         .then(() => console.log(`Set ${key}=${value}`))
+                }
+            }
         })
     }
 
