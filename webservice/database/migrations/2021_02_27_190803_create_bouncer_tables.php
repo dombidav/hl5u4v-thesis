@@ -44,7 +44,7 @@ class CreateBouncerTables extends Migration
         Schema::create(Models::table('assigned_roles'), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('role_id')->unsigned()->index();
-            $table->uuid('entity_id');
+            $table->string('entity_id');
             $table->string('entity_type');
             $table->bigInteger('restricted_to_id')->unsigned()->nullable();
             $table->string('restricted_to_type')->nullable();
@@ -56,8 +56,8 @@ class CreateBouncerTables extends Migration
             );
 
             $table->foreign('role_id')
-                  ->references('id')->on(Models::table('roles'))
-                  ->onUpdate('cascade')->onDelete('cascade');
+                ->references('id')->on(Models::table('roles'))
+                ->onUpdate('cascade')->onDelete('cascade');
         });
 
         Schema::create(Models::table('permissions'), function (Blueprint $table) {
@@ -74,8 +74,8 @@ class CreateBouncerTables extends Migration
             );
 
             $table->foreign('ability_id')
-                  ->references('id')->on(Models::table('abilities'))
-                  ->onUpdate('cascade')->onDelete('cascade');
+                ->references('id')->on(Models::table('abilities'))
+                ->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
