@@ -41,7 +41,7 @@ export async function configHeroku(config: IConfig) {
                 },
                 {
                     name: 'MySQL (requires a paid plan)',
-                    value: 'cleardb:ignite',
+                    value: 'jawsdb:kitefin',
                 }
             ]
         }

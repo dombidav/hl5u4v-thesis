@@ -144,10 +144,8 @@ export function getSteps(config: IConfig) {
 
                 if(config.heroku?.databaseAddon?.includes('cleardb')) {
                     const conf = await retrieveHerokuConfig(config.heroku?.appName ?? '')
-                    console.log(`Cleardb config:`, conf)
-                    console.log(`Cleardb config:`, JSON.stringify(conf, null, 2))
-                    debug('HerokuSteps::SetupEnvs','Setting DATABASE_URL=', conf.CLEARDB_DATABASE_URL)
-                    await cmdlet(`heroku config:set DATABASE_URL=${(conf.CLEARDB_DATABASE_URL)} -a ${config.heroku?.appName}`)
+                    debug('HerokuSteps::SetupEnvs','Setting DATABASE_URL=', conf.JAWSDB_URL)
+                    await cmdlet(`heroku config:set DATABASE_URL=${(conf.JAWSDB_URL)} -a ${config.heroku?.appName}`)
                 }
             }
         })
