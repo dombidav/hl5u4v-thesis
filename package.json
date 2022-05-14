@@ -4,6 +4,8 @@
   "repository": "https://github.com/dombidav/hl5u4v-thesis.git",
   "author": "Dombi Tibor <dombidav@gmail.com>",
   "scripts": {
+    "wiz": "yarn wizard",
+    "wizard": "yarn ts ./scripts/install-wizard.ts",
     "env:generate": "yarn ts scripts/env-generate.ts",
     "install:api": "cd webservice && composer install",
     "install:admin": "cd admin-panel && yarn",

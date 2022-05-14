@@ -40,20 +40,10 @@ export async function configHeroku(config: IConfig) {
                     value: 'heroku-postgresql:hobby-dev',
                 },
                 {
-                    name: 'MySQL (premium)',
-                    value: 'ah-mysql-stackhero:ist-kqor2t',
+                    name: 'MySQL (requires a paid plan)',
+                    value: 'cleardb:ignite',
                 }
             ]
         }
     ])
-}
-
-export function herokuCmdlets(config: IConfig) {
-    return [
-        `heroku create ${getEnv('APP_NAME', config)} --region=eu --buildpack heroku/nodejs`,
-        `heroku buildpacks:add --index 1 heroku/php`,
-        `heroku addons:create heroku-redis:hobby-dev -a ${getEnv('APP_NAME', config)}`,
-        `heroku addons:create heroku-postgresql:hobby-dev -a ${getEnv('APP_NAME', config)}`,
-        `heroku git:remote -a ${getEnv('APP_NAME', config)}`,
-    ]
 }

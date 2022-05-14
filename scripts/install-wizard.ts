@@ -71,8 +71,6 @@ async function main() {
     if(process.argv.includes('--verbose=3') || process.argv.includes('-vvv')) {
         process.env.VERBOSE = '3'
     }
-    if (await skipInstallWizard())
-        return 0
     await getConfiguration()
 
     const steps = getSteps(config)
