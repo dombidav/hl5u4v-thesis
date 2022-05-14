@@ -69,7 +69,7 @@ export async function configDatabase(fixProps: Partial<IDatabaseConfig> = {}): P
         process.env.DB_HOST = answers.host
         process.env.DB_PORT = answers.port.toString()
         process.env.DB_USERNAME = answers.username
-        process.env.DB_PASSWORD = answers.password
+        process.env.DB_PASSWORD = answers.password ?? ''
         process.env.DB_DATABASE = answers.database
         return answers
     })

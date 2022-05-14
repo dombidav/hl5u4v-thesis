@@ -12,5 +12,6 @@ export async function writeEnv(config: IConfig, VARIABLE_REGEX: RegExp) {
     const matches = env.matchAll(VARIABLE_REGEX)
     for (const match of matches)
         env = env.replace(match[0], getEnv<string>(match[1], config) ?? match[2])
+    env = env.replace(/"undefined"/g, '')
     await promises.writeFile('.env', env)
 }

@@ -16,10 +16,14 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import {getSteps} from "./install-wizard/install/get-steps";
 import {installation} from "./install-wizard/install/installation";
+import {promises} from "fs";
 
 export let config: IConfig = configFactory()
 
 async function confirmConfig(config: IConfig) {
+    if(process.env.NO_INTERACTIVE) {
+        return true
+    }
     console.log(chalk.bgGreen.black('Configuration'))
     console.log(config)
     const steps = getSteps(config)
@@ -61,6 +65,10 @@ async function getConfiguration() {
         await confirmContinue()
 }
 
+async function loadConfig() {
+    return JSON.parse((await promises.readFile('./config.cli.json')).toString())
+}
+
 async function main() {
     if(process.argv.includes('--verbose=1') || process.argv.includes('--verbose') || process.argv.includes('-v')) {
         process.env.VERBOSE = '1'
@@ -71,7 +79,16 @@ async function main() {
     if(process.argv.includes('--verbose=3') || process.argv.includes('-vvv')) {
         process.env.VERBOSE = '3'
     }
-    await getConfiguration()
+    if(process.argv.includes('--no-interactive') || process.argv.includes('-n')) {
+        process.env.NO_INTERACTIVE = '1'
+        config = await loadConfig()
+    } else {
+        await getConfiguration()
+    }
+
+    if(process.argv.some(arg => arg.startsWith('--skip='))) {
+        process.env.SKIP = process.argv.find(arg => arg.startsWith('--skip='))?.split('=')[1]
+    }
 
     const steps = getSteps(config)
     if (await confirmConfig(config))

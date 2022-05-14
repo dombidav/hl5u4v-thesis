@@ -29,14 +29,14 @@ export function getSteps(config: IConfig) {
             name: 'Copy .env to backend and frontend',
             action: () => cmdlet('yarn run env:generate')
         },
-        {
-            name: 'Install packages in frontend with yarn',
-            action: () => cmdlet('yarn install', {cwd: join(process.cwd(), 'admin-panel')})
-        },
-        {
-            name: 'Install packages in backend with Composer',
-            action: () => cmdlet('composer install', {cwd: join(process.cwd(), 'webservice')})
-        },
+        // {
+        //     name: 'Install packages in frontend with yarn',
+        //     action: () => cmdlet('yarn install', {cwd: join(process.cwd(), 'admin-panel')})
+        // },
+        // {
+        //     name: 'Install packages in backend with Composer',
+        //     action: () => cmdlet('composer install', {cwd: join(process.cwd(), 'webservice')})
+        // },
         {
             name: 'Set APP_KEY',
             action: () => cmdlet('yarn run set:key')
@@ -114,7 +114,8 @@ export function getSteps(config: IConfig) {
         steps.push({
             name: 'Set up Heroku environment variables',
             action: async () => {
-                const skipPattern = /APP_ENV|APP_URL|DB_.+|REDIS_.+|MAIL_.+/gi
+                const cmdlets: Promise<any>[] = []
+                const skipPattern = /APP_ENV|APP_URL|DB_|REDIS_|MAIL_/gi
                 const env = (await promises.readFile('.env')).toString()
                 for (const line of env.split('\n')) {
                     debug('HerokuSteps::SetupEnvs', 'Line:', line)
@@ -136,13 +137,15 @@ export function getSteps(config: IConfig) {
                         continue
                     }
                     debug('HerokuSteps::SetupEnvs','Setting env var:', key, value)
-                    cmdlet(`heroku config:set ${key}=${value} -a ${config.heroku?.appName}`)
-                         .then(() => console.log(`Set ${key}=${value}`))
+                    cmdlets.push(cmdlet(`heroku config:set ${key}=${value} -a ${config.heroku?.appName}`)
+                        .then(() => console.log(`Set ${key}=${value}`)))
                 }
 
-                cmdlet(`heroku config:set JWT_SECRET=${process.env.JWT_SEECRET} -a ${config.heroku?.appName}`).then()
+                cmdlets.push(cmdlet(`heroku config:set JWT_SECRET=${process.env.JWT_SEECRET} -a ${config.heroku?.appName}`))
 
-                if(config.heroku?.databaseAddon?.includes('cleardb')) {
+                await Promise.all(cmdlets)
+
+                if(config.heroku?.databaseAddon?.includes('jawsdb')) {
                     const conf = await retrieveHerokuConfig(config.heroku?.appName ?? '')
                     debug('HerokuSteps::SetupEnvs','Setting DATABASE_URL=', conf.JAWSDB_URL)
                     await cmdlet(`heroku config:set DATABASE_URL=${(conf.JAWSDB_URL)} -a ${config.heroku?.appName}`)

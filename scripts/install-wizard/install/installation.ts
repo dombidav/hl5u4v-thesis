@@ -4,7 +4,7 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 
 export async function installation(steps: { name: string; action: () => Promise<void> }[], config: IConfig) {
-    for (let i = 0; i < steps.length; i++){
+    for (let i = (parseInt(process.env.SKIP ?? '0')); i < steps.length; i++){
         console.clear()
         const step = steps[i]
         console.log(chalk.bgGreen.black(`${step.name} [${i+1} / ${steps.length}]...`))
