@@ -25,6 +25,23 @@ return new class extends Migration
     }
 
     /**
+     * Add the proper columns for a polymorphic table using numeric IDs (incremental).
+     *
+     * @param Blueprint $table
+     * @param string $name
+     * @param string|null $indexName
+     * @return void
+     */
+    public function numericMorphs(Blueprint $table, string $name, string $indexName = null)
+    {
+        $table->string("{$name}_type", 80);
+
+        $table->unsignedBigInteger("{$name}_id");
+
+        $table->index(["{$name}_type", "{$name}_id"], $indexName);
+    }
+
+    /**
      * Reverse the migrations.
      *
      * @return void
