@@ -84,3 +84,7 @@ node_modules/
 vendor/
 
 admin-panel/src/environments/environment.ts
+
+config.cli.json
+
+backup.env
