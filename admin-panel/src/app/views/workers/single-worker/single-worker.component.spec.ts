@@ -1,25 +1,25 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
 
-import { SingleWorkerComponent } from './single-worker.component';
+import { SingleWorkerComponent } from './single-worker.component'
 
 describe('SingleWorkerComponent', () => {
-  let component: SingleWorkerComponent;
-  let fixture: ComponentFixture<SingleWorkerComponent>;
+  let component: SingleWorkerComponent
+  let fixture: ComponentFixture<SingleWorkerComponent>
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SingleWorkerComponent ]
+      declarations: [ SingleWorkerComponent ],
     })
-    .compileComponents();
-  });
+    .compileComponents()
+  })
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SingleWorkerComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    fixture = TestBed.createComponent(SingleWorkerComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
+  })
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    expect(component).toBeTruthy()
+  })
+})

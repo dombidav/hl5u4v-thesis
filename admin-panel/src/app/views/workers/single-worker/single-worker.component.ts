@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core'
-import {WorkerService} from '../../../core/services/worker.service'
-import {ActivatedRoute} from '@angular/router'
-import {IWorker} from '../../../../types/worker.interface'
-import {workerFactory} from '../../../../factories/worker.factory'
-import {NgModel} from '@angular/forms'
-import {RedirectService} from "../../../core/services/redirect.service";
+import { Component, OnInit } from '@angular/core'
+import { WorkerService } from '../../../core/services/worker.service'
+import { ActivatedRoute } from '@angular/router'
+import { IWorker } from '../../../../types/worker.interface'
+import { workerFactory } from '../../../../factories/worker.factory'
+import { NgModel } from '@angular/forms'
+import { RedirectService } from '../../../core/services/redirect.service'
 
 @Component({
     selector: 'app-single-worker',
