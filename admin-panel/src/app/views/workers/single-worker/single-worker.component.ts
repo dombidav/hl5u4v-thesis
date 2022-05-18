@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core'
-import { WorkerService } from '../../../core/services/worker.service'
-import { ActivatedRoute } from '@angular/router'
-import { IWorker } from '../../../../types/worker.interface'
-import { workerFactory } from '../../../../factories/worker.factory'
-import { NgModel } from '@angular/forms'
+import {Component, OnInit} from '@angular/core'
+import {WorkerService} from '../../../core/services/worker.service'
+import {ActivatedRoute} from '@angular/router'
+import {IWorker} from '../../../../types/worker.interface'
+import {workerFactory} from '../../../../factories/worker.factory'
+import {NgModel} from '@angular/forms'
+import {RedirectService} from "../../../core/services/redirect.service";
 
 @Component({
     selector: 'app-single-worker',
@@ -11,31 +12,53 @@ import { NgModel } from '@angular/forms'
     styleUrls: ['./single-worker.component.scss'],
 })
 export class SingleWorkerComponent implements OnInit {
-    public worker?: IWorker
+    public resource?: IWorker
 
-    constructor(private readonly service: WorkerService, private readonly route: ActivatedRoute) {
+    public models: NgModel[] = []
+
+    public invalid = false
+
+    private interval: number | null = null
+
+    constructor(private readonly service: WorkerService, private readonly redirect: RedirectService, private readonly route: ActivatedRoute) {
         this.route.params.subscribe((params) => {
             if (!params.id || params.id === 'new') {
-                this.worker = workerFactory()
+                this.resource = workerFactory()
                 return
             }
-            this.service.read(params.id).subscribe((worker) => (this.worker = worker))
+            this.service.read(params.id).subscribe((worker) => (this.resource = worker))
         })
     }
 
     ngOnInit() {}
 
-    save(ngModels: NgModel[]) {
-        if (!this.check(ngModels)) {
+    save() {
+        if (this.check()) return
+        if (this.resource.id && this.resource.id !== 'N/A') {
+            console.log('update', this.resource)
+            this.service.edit(this.resource).subscribe(() => this.redirect.back())
             return
         }
+
+        this.service.add(this.resource).subscribe(() => this.redirect.back())
     }
 
-    check(ngModels: NgModel[]) {
-        return !ngModels.some((ngModel) => ngModel.invalid)
+    check() {
+        return this.models.some((ngModel) => ngModel.invalid)
     }
 
-    log(ngModels: NgModel[]) {
-        console.log(ngModels)
+    log(message: any) {
+        console.log(message)
+        return true
+    }
+
+    setCheckInterval(ngModels: NgModel[]) {
+        if (this.interval)
+            return true
+
+        this.models = ngModels
+        this.interval = setInterval(() => this.invalid = this.check(), 500)
+
+        return true
     }
 }

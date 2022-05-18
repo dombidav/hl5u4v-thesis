@@ -1,10 +1,10 @@
 <app-layout>
-    <div class='card'>
+    <div class='card' *ngIf="resource">
         <form #form autocomplete='off'>
             <div class='p-fluid grid'>
                 <div class='field col-12 col-md-4 my-5'>
                     <span class='p-float-label'>
-                        <input type='text' id='id' [readOnly]='true' name='id' pInputText [(ngModel)]='worker.id'
+                        <input type='text' id='id' [readOnly]='true' name='id' pInputText [(ngModel)]='resource.id'
                                #id='ngModel'>
                         <label for='id'>ID</label>
                     </span>
@@ -12,7 +12,7 @@
                 <div class='field col-12 col-md-4 my-5'>
                     <span class='p-float-label'>
                         <input type='text' id='name' autocomplete='false' name='name' pInputText
-                               [(ngModel)]='worker.name' required
+                               [(ngModel)]='resource.name' required
                                minlength='4' #name='ngModel' maxlength='255'>
                         <label for='name'>Name</label>
                     </span>
@@ -32,7 +32,7 @@
                 <div class='field col-12 col-md-4 my-5'>
                     <span class='p-float-label'>
                         <input type='text' id='rfid' autocomplete='false' name='rfid' pInputText
-                               [(ngModel)]='worker.rfid'
+                               [(ngModel)]='resource.rfid'
                                minlength='4' #rfid='ngModel' maxlength='255'>
                         <label for='rfid'>RFID</label>
                     </span>
@@ -49,7 +49,7 @@
                 <div class='field col-12 col-md-4 my-5'>
                     <span class='p-float-label'>
                         <p-calendar dateFormat='yy-mm-dd' id='birthdate' name='birthdate' [appendTo]='anchor' required
-                                    [(ngModel)]='worker.birthdate' #birthdate='ngModel' [panelStyle]='{width: "400px"}'></p-calendar>
+                                    [(ngModel)]='resource.birthdate' #birthdate='ngModel' [panelStyle]='{width: "400px"}'></p-calendar>
                         <label for='birthdate'>Birthdate</label>
                     </span>
                     <div *ngIf='birthdate.invalid && (birthdate.dirty || birthdate.touched)'
@@ -59,8 +59,9 @@
                         </div>
                     </div>
                 </div>
-                <div class='field col-12 col-md-4 my-5' (load)='log([])'>
-                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save([name, rfid, birthdate])' [disabled]='check([name, rfid, birthdate])'></p-button>
+                <!--suppress AngularUndefinedBinding -->
+                <div class='field col-12 col-md-4 my-5' [load]="setCheckInterval([name, rfid, birthdate])">
+                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save()' [disabled]='invalid'></p-button>
                 </div>
             </div>
         </form>

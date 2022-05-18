@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { IWorker } from '../../../types/worker.interface'
 import { WorkerService } from '../../core/services/worker.service'
+import { ViewDidEnter } from '@ionic/angular'
 
 @Component({
     selector: 'app-workers',
     templateUrl: './workers.component.html',
     styleUrls: ['./workers.component.scss'],
 })
-export class WorkersComponent implements OnInit {
+export class WorkersComponent implements OnInit, ViewDidEnter {
     refreshTable = new BehaviorSubject(null)
 
     records: IWorker[] = []
@@ -39,4 +40,8 @@ export class WorkersComponent implements OnInit {
     constructor(public readonly workersService: WorkerService) {}
 
     ngOnInit() {}
+
+    ionViewDidEnter() {
+        this.refreshTable.next(null)
+    }
 }
