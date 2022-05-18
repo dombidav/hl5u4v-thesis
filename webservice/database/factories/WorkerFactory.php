@@ -26,7 +26,7 @@ class WorkerFactory extends Factory
             'name' => $this->faker->name,
             'birthdate' => $this->faker->dateTime,
             'rfid' => Str::random(),
-            'telephone' => $this->faker->phoneNumber
+            'telephone' => "+5555{$this->faker->randomNumber(7)}",
         ];
     }
 }

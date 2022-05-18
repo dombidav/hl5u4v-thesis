@@ -15,9 +15,9 @@ class WorkerRequest extends ApiResourceRequest
                 ? []
                 : [
                 'name' => ['required', 'min:3'],
-                'rfid' => ['min:4'],
+                'rfid' => ['nullable', 'min:4'],
                 'birthdate' => ['required'],
-                'telephone' => ['min:6', new Phonenumber()],
+                'telephone' => ['nullable', 'min:6', new Phonenumber()],
             ];
     }
 
