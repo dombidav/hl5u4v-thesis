@@ -215,6 +215,7 @@
   },
   "defaultProject": "ng",
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "defaultCollection": "@ionic/angular-toolkit"
   }
 }

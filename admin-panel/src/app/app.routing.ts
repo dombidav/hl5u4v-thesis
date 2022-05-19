@@ -71,6 +71,16 @@ export const routes: Routes = [
         canLoad: [AuthGuard],
         canActivateChild: [AuthGuard],
     },
+    {
+        path: 'teams',
+        loadChildren: () => import('./views/teams/teams.module').then((m) => m.TeamsModule),
+        data: {
+            title: 'Teams > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
     { path: '**', component: P404Component },
 ]
 
