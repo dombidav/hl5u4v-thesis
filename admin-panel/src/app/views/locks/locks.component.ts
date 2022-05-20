@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { ViewDidEnter } from '@ionic/angular'
-import { ITeam } from '../../../types/team.interface'
-import { TeamService } from '../../core/services/team.service'
+import { ILock } from '../../../types/lock.interface'
+import { LockService } from '../../core/services/lock.service'
 
 @Component({
-    selector: 'app-teams',
-    templateUrl: './teams.component.html',
-    styleUrls: ['./teams.component.scss'],
+    selector: 'app-locks',
+    templateUrl: './locks.component.html',
+    styleUrls: ['./locks.component.scss'],
 })
-export class TeamsComponent implements OnInit, ViewDidEnter {
+export class LocksComponent implements OnInit, ViewDidEnter {
     refreshTable = new BehaviorSubject(null)
 
-    records: ITeam[] = []
+    records: ILock[] = []
 
     columns: {
         title: string | ((res: any) => string)
@@ -32,7 +32,7 @@ export class TeamsComponent implements OnInit, ViewDidEnter {
         },
     ]
 
-    constructor(public readonly resourceService: TeamService) {}
+    constructor(public readonly resourceService: LockService) {}
 
     ngOnInit() {}
 
