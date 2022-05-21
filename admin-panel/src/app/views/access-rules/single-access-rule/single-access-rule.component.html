@@ -1,0 +1,39 @@
+<app-layout>
+    <div class='card' *ngIf="resource">
+        <form #form autocomplete='off'>
+            <div class='p-fluid grid'>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <input type='text' id='id' [readOnly]='true' name='id' pInputText [(ngModel)]='resource.id'
+                               #id='ngModel'>
+                        <label for='id'>ID</label>
+                    </span>
+                </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <input type='text' id='name' autocomplete='false' name='name' pInputText
+                               [(ngModel)]='resource.name' required
+                               minlength='4' #name='ngModel' maxlength='255'>
+                        <label for='name'>Name</label>
+                    </span>
+                    <div *ngIf='name.invalid && (name.dirty || name.touched)'
+                         class='alert'>
+                        <div *ngIf="name.errors?.['required']">
+                            Name is required.
+                        </div>
+                        <div *ngIf="name.errors?.['minlength']">
+                            Name must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="name.errors?.['maxlength']">
+                            Name must be shorter than 250 characters.
+                        </div>
+                    </div>
+                </div>
+                <!--suppress AngularUndefinedBinding -->
+                <div class='field col-12 col-md-4 my-5' [load]="setCheckInterval([name])">
+                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save()' [disabled]='invalid'></p-button>
+                </div>
+            </div>
+        </form>
+    </div>
+</app-layout>

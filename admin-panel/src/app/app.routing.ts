@@ -101,6 +101,16 @@ export const routes: Routes = [
         canLoad: [AuthGuard],
         canActivateChild: [AuthGuard],
     },
+    {
+        path: 'access-rules',
+        loadChildren: () => import('./views/access-rules/access-rule.module').then((m) => m.AccessRuleModule),
+        data: {
+            title: 'Access Rules > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
     { path: '**', component: P404Component },
 ]
 
