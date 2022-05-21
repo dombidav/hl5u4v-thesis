@@ -81,6 +81,26 @@ export const routes: Routes = [
         canLoad: [AuthGuard],
         canActivateChild: [AuthGuard],
     },
+    {
+        path: 'locks',
+        loadChildren: () => import('./views/locks/locks.module').then((m) => m.LocksModule),
+        data: {
+            title: 'Locks > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
+    {
+        path: 'lock-groups',
+        loadChildren: () => import('./views/lock-groups/lock-groups.module').then((m) => m.LockGroupsModule),
+        data: {
+            title: 'Lock Groups > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
     { path: '**', component: P404Component },
 ]
 

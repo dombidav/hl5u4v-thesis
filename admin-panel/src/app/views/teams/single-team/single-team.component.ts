@@ -2,8 +2,8 @@ import { Component } from '@angular/core'
 import { ITeam } from '../../../../types/team.interface'
 import { TeamService } from '../../../core/services/team.service'
 import { SingleResourceComponent } from '../../../../utils/single-resource.component'
-import { teamFactory } from '../../../../factories/team.factory'
 import { ActivatedRoute } from '@angular/router'
+import { nameOnlyFactory } from '../../../../factories/name-only.factory'
 
 @Component({
     selector: 'app-single-team',
@@ -15,7 +15,7 @@ export class SingleTeamComponent extends SingleResourceComponent<ITeam> {
         super()
     }
 
-    protected resourceFactory = teamFactory
+    protected resourceFactory = nameOnlyFactory
 
     ngOnInit() {
         this.init()

@@ -1,6 +1,6 @@
-import { ITeam } from '../types/team.interface'
+import { IResource } from '../types/resource.interface'
 
-export function teamFactory(properties: Partial<ITeam> = {}): ITeam {
+export function nameOnlyFactory<T extends IResource & { name: string }>(properties: Partial<T> = {}) {
     return {
         id: properties.id || '',
         name: properties.name || '',

@@ -91,7 +91,7 @@ export class CrudTableComponent implements OnInit {
     /** Navigates to the new record page. */
     openNew() {
         this.onNewClick.emit()
-        APP_INJECTOR.get(RedirectService).to(`/${this.resourceName.toLowerCase()}/new`)
+        APP_INJECTOR.get(RedirectService).to(`/${this.resourceName.replace(/ /g, '-').toLowerCase()}/new`)
     }
 
     /** Deletes records selected by the checkbox */
@@ -126,7 +126,7 @@ export class CrudTableComponent implements OnInit {
     /** Opens the edit page for the record. */
     editRecord(item: any) {
         this.onEditClick.emit(item)
-        APP_INJECTOR.get(RedirectService).to(`/${this.resourceName.toLowerCase()}/${item.id}`)
+        APP_INJECTOR.get(RedirectService).to(`/${this.resourceName.replace(/ /g, '-').toLowerCase()}/${item.id}`)
     }
 
     /** Deletes the record. */

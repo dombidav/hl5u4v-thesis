@@ -1,21 +1,21 @@
 import { Component } from '@angular/core'
-import { WorkerService } from '../../../core/services/worker.service'
-import { IWorker } from '../../../../types/worker.interface'
-import { workerFactory } from '../../../../factories/worker.factory'
 import { SingleResourceComponent } from '../../../../utils/single-resource.component'
 import { ActivatedRoute } from '@angular/router'
+import { LockService } from '../../../core/services/lock.service'
+import { ILock } from '../../../../types/lock.interface'
+import { lockFactory } from '../../../../factories/lock.factory'
 
 @Component({
     selector: 'app-single-worker',
     templateUrl: './single-lock.component.html',
     styleUrls: ['./single-lock.component.scss'],
 })
-export class SingleLockComponent extends SingleResourceComponent<IWorker> {
-    constructor(protected readonly service: WorkerService, protected readonly route: ActivatedRoute) {
+export class SingleLockComponent extends SingleResourceComponent<ILock> {
+    constructor(protected readonly service: LockService, protected readonly route: ActivatedRoute) {
         super()
     }
 
-    protected readonly resourceFactory = workerFactory
+    protected resourceFactory = lockFactory
 
     ngOnInit() {
         this.init()

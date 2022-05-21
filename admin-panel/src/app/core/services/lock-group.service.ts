@@ -7,6 +7,6 @@ import { ILockGroup } from '../../../types/lock-groups.interface'
 })
 export class LockGroupService extends ResourceService<ILockGroup> {
     constructor() {
-        super('lock-group')
+        super('lock_group')
     }
 }

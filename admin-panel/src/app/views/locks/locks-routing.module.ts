@@ -12,14 +12,14 @@ const routes: Routes = [
         path: 'new',
         component: SingleLockComponent,
         data: {
-            title: 'Workers > New Worker',
+            title: 'Locks > New Lock',
         },
     },
     {
         path: ':id',
         component: SingleLockComponent,
         data: {
-            title: 'Workers > Single Worker',
+            title: 'Locks > Single Lock',
         },
     },
 ]
