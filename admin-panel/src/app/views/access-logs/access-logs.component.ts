@@ -1,22 +1,22 @@
 import { Component, OnInit } from '@angular/core'
 import { BehaviorSubject } from 'rxjs'
 import { ViewDidEnter } from '@ionic/angular'
-import { AccessRuleService } from '../../core/services/access-rule.service'
-import { IAccessRule } from '../../../types/access-rule.interface'
+import { IAccessLog } from '../../../types/access-log.interface'
+import { AccessLogService } from '../../core/services/access-log.service'
 
 @Component({
     selector: 'app-lock-groups',
-    templateUrl: './access-rules.component.html',
-    styleUrls: ['./access-rules.component.scss'],
+    templateUrl: './access-logs.component.html',
+    styleUrls: ['./access-logs.component.scss'],
 })
-export class AccessRulesComponent implements OnInit, ViewDidEnter {
+export class AccessLogsComponent implements OnInit, ViewDidEnter {
     refreshTable = new BehaviorSubject(null)
 
-    records: IAccessRule[] = []
+    records: IAccessLog[] = []
 
     columns: {
         title: string | ((res: any) => string)
-        field: any
+        field: keyof IAccessLog
         sortable?: boolean
         content?: (res: any) => string
     }[] = [
@@ -26,13 +26,13 @@ export class AccessRulesComponent implements OnInit, ViewDidEnter {
             sortable: true,
         },
         {
-            title: 'Name',
-            field: 'name',
+            title: 'Event',
+            field: 'event',
             sortable: true,
         },
     ]
 
-    constructor(public readonly resourceService: AccessRuleService) {}
+    constructor(public readonly resourceService: AccessLogService) {}
 
     ngOnInit() {}
 

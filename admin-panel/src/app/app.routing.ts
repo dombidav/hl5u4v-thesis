@@ -111,6 +111,16 @@ export const routes: Routes = [
         canLoad: [AuthGuard],
         canActivateChild: [AuthGuard],
     },
+    {
+        path: 'access-logs',
+        loadChildren: () => import('./views/access-logs/access-logs.module').then((m) => m.AccessLogsModule),
+        data: {
+            title: 'Access Logs > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
     { path: '**', component: P404Component },
 ]
 

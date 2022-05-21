@@ -65,7 +65,7 @@ const navItems: (INavData & { canActivate?: () => Promise<boolean> })[] = [
     },
     {
         name: 'Check logs',
-        url: '/logs',
+        url: '/access-logs',
         icon: 'icon-book-open',
         canActivate: AuthGuard.check,
     },
