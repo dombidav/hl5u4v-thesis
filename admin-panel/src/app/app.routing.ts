@@ -121,6 +121,16 @@ export const routes: Routes = [
         canLoad: [AuthGuard],
         canActivateChild: [AuthGuard],
     },
+    {
+        path: 'users',
+        loadChildren: () => import('./views/users/users.module').then((m) => m.UsersModule),
+        data: {
+            title: 'Users > List',
+        },
+        canActivate: [AuthGuard],
+        canLoad: [AuthGuard],
+        canActivateChild: [AuthGuard],
+    },
     { path: '**', component: P404Component },
 ]
 

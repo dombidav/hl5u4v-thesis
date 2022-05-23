@@ -1,8 +1,7 @@
-export interface IUser {
-    id: string
+import { IResource } from './resource.interface'
+
+export interface IUser extends IResource {
     name: string
     email: string
     email_verified_at: Date
-    created_at: Date
-    updated_at: Date
 }
