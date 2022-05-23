@@ -7,22 +7,14 @@ use App\Models\Lock;
 use App\Models\Log;
 use App\Models\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JetBrains\PhpStorm\ArrayShape;
 
 class LogFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
     protected $model = Log::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
+    #[ArrayShape(['event' => 'string', 'action' => 'string', 'worker_id' => 'mixed', 'lock_id' => 'mixed', 'rule_id' => 'mixed|null'])]
+    public function definition(): array
     {
         return [
             'event' => $this->faker->boolean(90) ? 'entry' : 'other',

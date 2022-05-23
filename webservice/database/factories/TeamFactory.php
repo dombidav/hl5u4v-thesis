@@ -4,25 +4,24 @@ namespace Database\Factories;
 
 use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use JetBrains\PhpStorm\ArrayShape;
 
 class TeamFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
+    const departments = [
+        'Customer', 'Sales', 'Marketing', 'Employee', 'Human Resource Management', 'Partners', 'Vendors',
+        'Distributors', 'Research and Development', 'Procurement', 'Production', 'Supply Chain', 'Warehouses',
+        'Logistics', 'Quality', 'Inspections', 'Finance', 'Accounts', 'Legal', 'Maintenance', 'Security',
+        'Administration', 'Information Technology'
+    ];
+
     protected $model = Team::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
-    public function definition()
+    #[ArrayShape(['name' => 'string'])]
+    public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->faker->unique()->randomElement(self::departments),
         ];
     }
 }

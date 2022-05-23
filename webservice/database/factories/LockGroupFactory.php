@@ -7,22 +7,29 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class LockGroupFactory extends Factory
 {
-    /**
-     * The name of the factory's corresponding model.
-     *
-     * @var string
-     */
     protected $model = LockGroup::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array
-     */
     public function definition()
     {
         return [
-            'name' => $this->faker->name,
+            'name' => $this->generateGroupName(),
         ];
+    }
+
+    private function generateGroupName()
+    {
+        try {
+            switch (rand(0, 1)) {
+                case 0:
+                    $groupNumber = $this->faker->numberBetween(1, 100);
+                    return "GRP $groupNumber";
+                case 1:
+                    $building = $this->faker->unique()->randomElement(LockFactory::BUILDINGS);
+                    return "BUILDING $building";
+            }
+        } catch (\Exception $e) {
+            return $this->generateGroupName();
+        }
+
     }
 }
