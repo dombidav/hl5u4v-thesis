@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext'
 import { SingleTeamComponent } from './single-team/single-team.component'
 import { FormsModule } from '@angular/forms'
 import { CalendarModule } from 'primeng/calendar'
+import { PickListModule } from 'primeng/picklist'
 
 @NgModule({
     declarations: [TeamsComponent, SingleTeamComponent],
@@ -28,6 +29,7 @@ import { CalendarModule } from 'primeng/calendar'
         InputTextModule,
         FormsModule,
         CalendarModule,
+        PickListModule,
     ],
 })
 export class TeamsModule {}

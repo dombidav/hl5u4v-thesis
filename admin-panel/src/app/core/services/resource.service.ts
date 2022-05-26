@@ -11,13 +11,17 @@ import { omit } from '../../../utils/object.tools'
  * @template T Resource type
  */
 export class ResourceService<T extends IResource> implements IResourceService<T> {
-
     /**
      * Create a new resource
      * @param path Path to the resource on the api. Example: if the URI is `.../api/users`, the path is `users`
+     * @param queryParams Query parameters to add to the request
      * @param http HttpClient instance. If not provided, the Angular default one will be used @ref: https://angular.io/api/common/http/HttpClient
      */
-    constructor(private readonly path: string, private readonly http: HttpClient = null) {
+    constructor(
+        protected readonly path: string,
+        protected readonly queryParams: Record<string, string> = {},
+        protected readonly http: HttpClient = null,
+    ) {
         this.http = http ?? APP_INJECTOR.get(HttpClient)
     }
 
@@ -26,7 +30,8 @@ export class ResourceService<T extends IResource> implements IResourceService<T>
      * @returns Observable of resources. The observable will be completed when the request is completed
      */
     browse() {
-        return this.http.get<{ data: T[] }>(api(this.path))
+        return this.http
+            .get<{ data: T[] }>(api(this.path, this.queryParams))
             .pipe(map((res) => res.data))
             .pipe(first())
     }
@@ -37,7 +42,8 @@ export class ResourceService<T extends IResource> implements IResourceService<T>
      * @returns Observable of the resource. The observable will be completed when the request is completed
      */
     read(id: string | number) {
-        return this.http.get<{ data: T }>(api([this.path, id.toString()]))
+        return this.http
+            .get<{ data: T }>(api([this.path, id.toString()], this.queryParams))
             .pipe(map((res) => res.data))
             .pipe(first())
     }
@@ -49,7 +55,7 @@ export class ResourceService<T extends IResource> implements IResourceService<T>
      */
     edit(resource: Partial<Omit<T, 'id'>> & { id: string | number }) {
         return this.http
-            .put<never>(api([this.path, resource.id.toString()]), omit(resource, 'id'))
+            .put<never>(api([this.path, resource.id.toString()], this.queryParams), omit(resource, 'id'))
             .pipe(first())
     }
 
@@ -59,8 +65,7 @@ export class ResourceService<T extends IResource> implements IResourceService<T>
      * @returns Observable of the updated resource. The observable will be completed when the request is completed
      */
     add(resource: Partial<Omit<T, 'id'>>) {
-        return this.http.post<never>(api(this.path), omit(resource, 'id' as any))
-            .pipe(first())
+        return this.http.post<never>(api(this.path, this.queryParams), omit(resource, 'id' as any)).pipe(first())
     }
 
     /**
@@ -69,7 +74,8 @@ export class ResourceService<T extends IResource> implements IResourceService<T>
      * @returns Observable of null. The observable will be completed when the request is completed
      */
     destroy(id: string | number) {
-        return this.http.delete(api([this.path, id.toString()]))
+        return this.http
+            .delete(api([this.path, id.toString()], this.queryParams))
             .pipe(map(() => null))
             .pipe(first())
     }

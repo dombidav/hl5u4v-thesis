@@ -29,9 +29,22 @@
                         </div>
                     </div>
                 </div>
+                <div class='field col-12 my-5'>
+                    <span>
+                        <label for='attached-workers'>Attach Workers</label>
+                        <p-pickList [dragdrop]='true' [showSourceControls]='false' [showTargetControls]='false'
+                                    [sourceStyle]="{'height':'30rem'}" [source]='notAttachedList' [targetStyle]="{'height':'30rem'}"
+                                    [target]='attachedList' filterBy='name,rfid' id='attached-workers'
+                                    sourceHeader='Workers' targetHeader='Members'>
+                            <ng-template let-item pTemplate='item'>
+                                <div style="font-size:14px;margin:15px 5px 0 0">{{item.name}} - {{item.rfid}}</div>
+                            </ng-template>
+                        </p-pickList>
+                    </span>
+                </div>
                 <!--suppress AngularUndefinedBinding -->
                 <div class='field col-12 col-md-4 my-5' [load]="setCheckInterval([name])">
-                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save()' [disabled]='invalid'></p-button>
+                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save(null, afterSave.bind(this))' [disabled]='invalid'></p-button>
                 </div>
             </div>
         </form>

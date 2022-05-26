@@ -44,7 +44,12 @@ class TeamController extends Controller
      */
     public function show(Team $team): TeamResource
     {
-        return TeamResource::make($team);
+        if(request()->query('not-attached', '0') === '1') {
+            return TeamResource::make($team->loadMissing('workers'))->additional([
+                'not_attached' => Worker::query()->whereNotIn('id', $team->workers->pluck('id'))->get()
+           ]);
+        }
+        return TeamResource::make($team->loadMissing('workers'));
     }
 
     /**

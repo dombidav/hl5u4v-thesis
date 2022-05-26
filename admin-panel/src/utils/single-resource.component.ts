@@ -33,24 +33,41 @@ export abstract class SingleResourceComponent<T extends IResource> implements On
     }
 
     init() {
-        this.route.params.subscribe((params) => {
-            if (!params.id || params.id === 'new') {
-                this.resource = this.resourceFactory()
-                return
-            }
-            this.service.read(params.id).subscribe((resource) => (this.resource = resource))
+        return new Promise<void>((resolve) => {
+            this.route.params.subscribe((params) => {
+                if (!params.id || params.id === 'new') {
+                    this.resource = this.resourceFactory()
+                    return
+                }
+                this.service.read(params.id).subscribe((resource) => {
+                    this.resource = resource
+                    resolve()
+                })
+            })
         })
     }
 
-    save() {
+    /**
+     * Saves the resource.
+     * @param before - Function to be called before saving. First argument is true if the resource is created, the second argument is the resource.
+     * @param after - Function to be called after saving. First argument is true if the resource is created, the second argument is the resource.
+     */
+    save(before?: (bool, T) => void, after?: (bool, T) => void) {
         if (this.check()) return
         if (this.resource.id && this.resource.id !== 'N/A') {
-            console.log('update', this.resource)
-            this.service.edit(this.resource).subscribe(() => this.redirect.back())
+            before?.(false, this.resource)
+            this.service.edit(this.resource).subscribe(() => {
+                after?.(false, this.resource)
+                this.redirect.back()
+            })
             return
         }
 
-        this.service.add(this.resource).subscribe(() => this.redirect.back())
+        before?.(true, this.resource)
+        this.service.add(this.resource).subscribe(() => {
+            after?.(true, this.resource)
+            this.redirect.back()
+        })
     }
 
     check() {

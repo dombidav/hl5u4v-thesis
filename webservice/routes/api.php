@@ -40,11 +40,11 @@ Route::put('/access/{device_key}', [AccessController::class, 'enter'])->name('ac
 Route::group(['middleware' => 'auth'],   function ($router) {
     // Non-resource routes
     Route::post('/team-control', [TeamController::class, 'attach'])->name('team.attach');
-    Route::delete('/team-control', [TeamController::class, 'detach'])->name('team.detach');
+    Route::post('/team-control/detach', [TeamController::class, 'detach'])->name('team.detach');
     Route::post('/rule-control', [AccessRuleController::class, 'attach'])->name('rule.attach');
-    Route::delete('/rule-control', [AccessRuleController::class, 'detach'])->name('rule.detach');
+    Route::post('/rule-control/detach', [AccessRuleController::class, 'detach'])->name('rule.detach');
     Route::post('/lock-control', [LockGroupController::class, 'attach'])->name('lock_group.attach');
-    Route::delete('/lock-control', [LockGroupController::class, 'detach'])->name('lock_group.detach');
+    Route::post('/lock-control/detach', [LockGroupController::class, 'detach'])->name('lock_group.detach');
 
 
     // Resources
