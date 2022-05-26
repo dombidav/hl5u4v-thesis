@@ -35,6 +35,7 @@ export class TeamService extends ResourceService<ITeam> {
                 }),
             )
         }
+        if (rqs.length === 0) return new Observable((s) => s.complete())
         return forkJoin(rqs).pipe(first())
     }
 

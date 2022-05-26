@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext'
 import { SingleLockGroupComponent } from './single-lock-group/single-lock-group.component'
 import { FormsModule } from '@angular/forms'
 import { CalendarModule } from 'primeng/calendar'
+import { PickListModule } from 'primeng/picklist'
 
 @NgModule({
     declarations: [LockGroupsComponent, SingleLockGroupComponent],
@@ -28,6 +29,7 @@ import { CalendarModule } from 'primeng/calendar'
         InputTextModule,
         FormsModule,
         CalendarModule,
+        PickListModule,
     ],
 })
 export class LockGroupsModule {}
