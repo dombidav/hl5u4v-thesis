@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext'
 import { SingleAccessRuleComponent } from './single-access-rule/single-access-rule.component'
 import { FormsModule } from '@angular/forms'
 import { CalendarModule } from 'primeng/calendar'
+import { PickListModule } from 'primeng/picklist'
 
 @NgModule({
     declarations: [AccessRulesComponent, SingleAccessRuleComponent],
@@ -28,6 +29,7 @@ import { CalendarModule } from 'primeng/calendar'
         InputTextModule,
         FormsModule,
         CalendarModule,
+        PickListModule,
     ],
 })
 export class AccessRuleModule {}

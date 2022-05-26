@@ -29,6 +29,38 @@
                         </div>
                     </div>
                 </div>
+                <div class='field col-12 my-5'>
+                    <span>
+                        <label for='attached-teams'>Attach Teams</label>
+                        <p-pickList [dragdrop]='true' [showSourceControls]='false' [showTargetControls]='false'
+                                    [sourceStyle]="{'height':'30rem'}" [source]='lists.notAttachedTeams' [targetStyle]="{'height':'30rem'}"
+                                    [target]='lists.attachedTeams' filterBy='name'
+                                    (onMoveToTarget)='attachTeam($event.items)' (onMoveToSource)='detachTeam($event.items)'
+                                    (onMoveAllToTarget)='attachTeam($event.items)' (onMoveAllToSource)='detachTeam($event.items)'
+                                    id='attached-teams'
+                                    sourceHeader='Teams' targetHeader='Attached Teams'>
+                            <ng-template let-item pTemplate='item'>
+                                <div style="font-size:14px;margin:15px 5px 0 0">{{item.name}}</div>
+                            </ng-template>
+                        </p-pickList>
+                    </span>
+                </div>
+                <div class='field col-12 my-5'>
+                    <span>
+                        <label for='attached-lock-groups'>Attach Lock Groups</label>
+                        <p-pickList [dragdrop]='true' [showSourceControls]='false' [showTargetControls]='false'
+                                    [sourceStyle]="{'height':'30rem'}" [source]='lists.notAttachedLockGroups' [targetStyle]="{'height':'30rem'}"
+                                    [target]='lists.attachedLockGroups' filterBy='name'
+                                    (onMoveToTarget)='attachLockGroup($event.items)' (onMoveToSource)='detachLockGroup($event.items)'
+                                    (onMoveAllToTarget)='attachLockGroup($event.items)' (onMoveAllToSource)='detachLockGroup($event.items)'
+                                    id='attached-lock-groups'
+                                    sourceHeader='Lock Groups' targetHeader='Attached Lock Groups'>
+                            <ng-template let-item pTemplate='item'>
+                                <div style="font-size:14px;margin:15px 5px 0 0">{{item.name}}</div>
+                            </ng-template>
+                        </p-pickList>
+                    </span>
+                </div>
                 <!--suppress AngularUndefinedBinding -->
                 <div class='field col-12 col-md-4 my-5' [load]="setCheckInterval([name])">
                     <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save()' [disabled]='invalid'></p-button>

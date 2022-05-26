@@ -28,7 +28,12 @@ class LockGroupController extends Controller
 
     public function show(LockGroup $lock_group): LockGroupResource
     {
-        return LockGroupResource::make($lock_group);
+        if(request()->query('not-attached', '0') === '1') {
+            return LockGroupResource::make($lock_group->loadMissing('locks'))->additional([
+                'not_attached' => Lock::query()->whereNotIn('id', $lock_group->locks->pluck('id'))->get()
+            ]);
+        }
+        return LockGroupResource::make($lock_group->loadMissing('locks'));
     }
 
     public function update(LockGroupUpdateRequest $request, LockGroup $lock_group): JsonResponse
