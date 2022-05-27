@@ -12,7 +12,7 @@ export const omit: Omit2 = (obj, ...keys) => {
     for (key in obj) {
         if (keys.includes(key)) continue
 
-        if (typeof obj[key] !== 'object') {
+        if (typeof obj[key] !== 'object' || obj[key] === null || obj[key] === undefined) {
             result[key] = obj[key]
             continue
         }

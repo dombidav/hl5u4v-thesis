@@ -37,6 +37,7 @@ export abstract class SingleResourceComponent<T extends IResource> implements On
             this.route.params.subscribe((params) => {
                 if (!params.id || params.id === 'new') {
                     this.resource = this.resourceFactory()
+                    resolve()
                     return
                 }
                 this.service.read(params.id).subscribe((resource) => {

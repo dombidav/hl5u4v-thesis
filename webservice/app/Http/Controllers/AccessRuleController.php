@@ -45,7 +45,13 @@ class AccessRuleController extends Controller
      */
     public function show(AccessRule $access_rule): AccessRuleResource
     {
-        return AccessRuleResource::make($access_rule);
+        if(request()->query('not-attached', '0') === '1') {
+            return AccessRuleResource::make($access_rule->loadMissing('lockGroups')->loadMissing('workerGroups'))->additional([
+                'not_attached_lock_groups' => LockGroup::query()->whereNotIn('id', $access_rule->lockGroups->pluck('id'))->get(),
+                'not_attached_worker_groups' => Team::query()->whereNotIn('id', $access_rule->workerGroups->pluck('id'))->get()
+            ]);
+        }
+        return AccessRuleResource::make($access_rule->loadMissing('lock_groups')->loadMissing('worker_groups'));
     }
 
     /**

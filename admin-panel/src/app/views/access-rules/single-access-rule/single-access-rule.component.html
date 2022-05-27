@@ -29,6 +29,47 @@
                         </div>
                     </div>
                 </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span>
+                        <p-selectButton name='rule-type' [options]='ruleTypes' [(ngModel)]='genericRule' optionLabel="label" optionValue="value"></p-selectButton>
+                    </span>
+                </div>
+                <ng-container *ngIf='!genericRule'>
+                    <div class='field col-12 col-md-6 my-5'>
+                        <span>
+                            <p-calendar name='on' [(ngModel)]="definition.on" [inline]="true" [firstDayOfWeek]='1'></p-calendar>
+                        </span>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf='genericRule'>
+                    <div class='field col-12 my-5'>
+                        <span>
+                            <p-toggleButton [style]='{display: "inline"}' name='mon' onLabel='Mon' offLabel='Mon' [(ngModel)]='definition.onDays.mon'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='tue' onLabel='Tue' offLabel='Tue' [(ngModel)]='definition.onDays.tue'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='wed' onLabel='Wed' offLabel='Wed' [(ngModel)]='definition.onDays.wed'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='thu' onLabel='Thu' offLabel='Thu' [(ngModel)]='definition.onDays.thu'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='fri' onLabel='Fri' offLabel='Fri' [(ngModel)]='definition.onDays.fri'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='sat' onLabel='Sat' offLabel='Sat' [(ngModel)]='definition.onDays.sat'></p-toggleButton>
+                            <p-toggleButton [style]='{display: "inline"}' name='sun' onLabel='Sun' offLabel='Sun' [(ngModel)]='definition.onDays.sun'></p-toggleButton>
+                        </span>
+                    </div>
+                </ng-container>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <p-calendar id='from-time' name='from-time' [(ngModel)]='definition.from' [timeOnly]='true' hourFormat='24'></p-calendar>
+                        <label for='from-time'>From</label>
+                    </span>
+                </div>
+                <div class='field col-12 col-md-4 my-5'>
+                    <span class='p-float-label'>
+                        <p-calendar id='to-time' name='to-time' [(ngModel)]='definition.to' [timeOnly]='true' hourFormat='24'></p-calendar>
+                        <label for='to-time'>To</label>
+                    </span>
+                </div>
+                <div class='field col-12 my-5'>
+                    <label for='action'>Action</label><br>
+                    <p-toggleButton id='action' [style]='{display: "inline"}' name='action' onLabel='Allow through' offLabel='Deny access' [(ngModel)]='definition.allow'></p-toggleButton>
+                </div>
                 <div class='field col-12 my-5'>
                     <span>
                         <label for='attached-teams'>Attach Teams</label>
@@ -63,7 +104,7 @@
                 </div>
                 <!--suppress AngularUndefinedBinding -->
                 <div class='field col-12 col-md-4 my-5' [load]="setCheckInterval([name])">
-                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save()' [disabled]='invalid'></p-button>
+                    <p-button role='submit' label='Save' styleClass='p-button p-button-success' (click)='save(beforeSave.bind(this))' [disabled]='invalid'></p-button>
                 </div>
             </div>
         </form>

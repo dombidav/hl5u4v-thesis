@@ -14,6 +14,8 @@ import { SingleAccessRuleComponent } from './single-access-rule/single-access-ru
 import { FormsModule } from '@angular/forms'
 import { CalendarModule } from 'primeng/calendar'
 import { PickListModule } from 'primeng/picklist'
+import { SelectButtonModule } from 'primeng/selectbutton'
+import { ToggleButtonModule } from 'primeng/togglebutton'
 
 @NgModule({
     declarations: [AccessRulesComponent, SingleAccessRuleComponent],
@@ -30,6 +32,8 @@ import { PickListModule } from 'primeng/picklist'
         FormsModule,
         CalendarModule,
         PickListModule,
+        SelectButtonModule,
+        ToggleButtonModule,
     ],
 })
 export class AccessRuleModule {}
