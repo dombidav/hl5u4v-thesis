@@ -7,6 +7,7 @@ use App\Traits\ApiResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use \JsonException;
+use stdClass;
 
 class AccessRule extends Model
 {
@@ -30,7 +31,7 @@ class AccessRule extends Model
     public function getDefinitionAttribute($value)
     {
         try {
-            return empty($value) ? [] : json_decode($value, false, 512, JSON_THROW_ON_ERROR);
+            $val = empty($value) ? new stdClass() : json_decode($value, false, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             abort($e->getCode() ?? 500, $e->getMessage() ?? 'Json parse error');
         }

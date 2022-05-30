@@ -45,22 +45,34 @@ class AccessController extends Controller
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Get common access rule between the LockGroup and the Team">
+//        $commonAccessRules = AccessRule::whereHas('lockGroups', function ($q) use ($lockGroups) {
+//            $q->whereIn('lock_group_id', $lockGroups);
+//        })->whereHas('workerGroups', function ($q) use ($teams) {
+//            $q->where('team_id', $teams);
+//        })->get();
+
         /** @var Collection $commonAccessRules */
-        $commonAccessRules = AccessRule::whereHas('lockGroups', function ($q) use ($lockGroups) {
+        $lockGroupsAccessRules = AccessRule::whereHas('lockGroups', function ($q) use ($lockGroups) {
             $q->whereIn('lock_group_id', $lockGroups);
-        })->whereHas('workerGroups', function ($q) use ($teams) {
-            $q->where('team_id', $teams);
         })->get();
+        $teamsAccessRules = AccessRule::whereHas('workerGroups', function ($q) use ($teams) {
+            $q->whereIn('team_id', $teams);
+        })->get();
+        $commonAccessRules = $lockGroupsAccessRules->intersect($teamsAccessRules);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Check if ANY rule allows access">
+        $asd = [];
         foreach ($commonAccessRules as $rule) {
+            $asd[$rule->id] = $rule->isAllowing;
             /** @var AccessRule $rule */
             if($rule->isAllowing){
                 Log::entry('allow', $worker, $lock, $rule);
                 return response()->json(['action' => 'allow'], ResponseCode::HTTP_ACCEPTED);
             }
         }
+
+        dd($asd);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Return LOCKED status, because none of the rules allowed access">
