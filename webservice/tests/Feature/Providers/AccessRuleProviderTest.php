@@ -5,10 +5,12 @@ namespace Providers;
 use App\Models\AccessRule;
 use App\Providers\AccessRuleProvider;
 use Carbon\Carbon;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Tests\CreatesApplication;
 
-class AccessRuleProviderTest extends TestCase
+class AccessRuleProviderTest extends BaseTestCase
 {
+    use CreatesApplication;
 
     public function testGenericRuleShouldAllow()
     {

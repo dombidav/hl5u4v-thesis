@@ -7,6 +7,8 @@ import { IAccessRule, IGenericAccessRuleDefinition } from '../../../../types/acc
 import { ITeam } from '../../../../types/team.interface'
 import { ILockGroup } from '../../../../types/lock-groups.interface'
 import { IInternalAccessRuleDefinition } from '../../../../types/internal-access-rule-definition.interface'
+import { TeamService } from '../../../core/services/team.service'
+import { LockGroupService } from '../../../core/services/lock-group.service'
 
 @Component({
     selector: 'app-single-worker',
@@ -28,7 +30,12 @@ export class SingleAccessRuleComponent extends SingleResourceComponent<IAccessRu
         notAttachedLockGroups: [],
     }
 
-    constructor(protected readonly service: AccessRuleService, protected readonly route: ActivatedRoute) {
+    constructor(
+        protected readonly service: AccessRuleService,
+        protected readonly teamService: TeamService,
+        protected readonly lockGroupService: LockGroupService,
+        protected readonly route: ActivatedRoute,
+    ) {
         super()
     }
 
@@ -88,23 +95,34 @@ export class SingleAccessRuleComponent extends SingleResourceComponent<IAccessRu
 
     async ngOnInit() {
         await this.init()
-        if ((this.resource.definition as any).onDays?.length) {
-            this.genericRule = true
-            this.definition.onDays = {
-                mon: this.incl(0),
-                tue: this.incl(1),
-                wed: this.incl(2),
-                thu: this.incl(3),
-                fri: this.incl(4),
-                sat: this.incl(5),
-                sun: this.incl(6),
+        if (this.resource.id !== 'N/A') {
+            if ((this.resource.definition as any).onDays?.length) {
+                this.genericRule = true
+                this.definition.onDays = {
+                    mon: this.incl(0),
+                    tue: this.incl(1),
+                    wed: this.incl(2),
+                    thu: this.incl(3),
+                    fri: this.incl(4),
+                    sat: this.incl(5),
+                    sun: this.incl(6),
+                }
             }
+            this.service.getAttachedList(this.resource.id).subscribe((res) => {
+                this.lists.attachedTeams = res.attached_teams
+                this.lists.notAttachedTeams = res.not_attached_teams
+                this.lists.attachedLockGroups = res.attached_lock_groups
+                this.lists.notAttachedLockGroups = res.not_attached_lock_groups
+            })
+            return
         }
-        this.service.getAttachedList(this.resource.id).subscribe((res) => {
-            this.lists.attachedTeams = res.attached_teams
-            this.lists.notAttachedTeams = res.not_attached_teams
-            this.lists.attachedLockGroups = res.attached_lock_groups
-            this.lists.notAttachedLockGroups = res.not_attached_lock_groups
+
+        this.teamService.browse().subscribe((teams) => {
+            this.lists.notAttachedTeams = teams
+        })
+
+        this.lockGroupService.browse().subscribe((lockGroups) => {
+            this.lists.notAttachedLockGroups = lockGroups
         })
     }
 

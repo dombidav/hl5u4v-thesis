@@ -17,6 +17,7 @@ class AccessRuleRequest extends ApiResourceRequest
                 'name' => ['required', 'min:3'],
                 'description' => ['required'],
                 'definition' => [new ValidateRuleDefinition()],
+                'action' => ['required', 'in:allow,forbid'],
             ];
     }
 

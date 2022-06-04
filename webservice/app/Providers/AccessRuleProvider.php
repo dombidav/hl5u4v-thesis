@@ -3,17 +3,23 @@
 namespace App\Providers;
 
 use App\Models\AccessRule;
-use http\Exception\RuntimeException;
+use Exception;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\ServiceProvider;
 
 class AccessRuleProvider extends ServiceProvider
 {
 
+    /**
+     * @throws Exception
+     */
     public static function DoesRuleAllows(null|object|array $definition, AccessRule $rule): bool
     {
         if(!is_object($definition)){
-            throw new RuntimeException('Definition was empty');
+            if(!is_array($definition)){
+                throw new Exception('Definition must be an object or an array');
+            }
+            $definition = (object)$definition;
         }
 
         if(!isset($definition->from)) {

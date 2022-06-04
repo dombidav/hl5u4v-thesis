@@ -51,7 +51,7 @@ class AccessRuleController extends Controller
                 'not_attached_worker_groups' => Team::query()->whereNotIn('id', $access_rule->workerGroups->pluck('id'))->get()
             ]);
         }
-        return AccessRuleResource::make($access_rule->loadMissing('lock_groups')->loadMissing('worker_groups'));
+        return AccessRuleResource::make($access_rule->loadMissing('lockGroups')->loadMissing('workerGroups'));
     }
 
     /**

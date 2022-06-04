@@ -16,6 +16,7 @@ import { CalendarModule } from 'primeng/calendar'
 import { PickListModule } from 'primeng/picklist'
 import { SelectButtonModule } from 'primeng/selectbutton'
 import { ToggleButtonModule } from 'primeng/togglebutton'
+import { EditorModule } from 'primeng/editor'
 
 @NgModule({
     declarations: [AccessRulesComponent, SingleAccessRuleComponent],
@@ -34,6 +35,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton'
         PickListModule,
         SelectButtonModule,
         ToggleButtonModule,
+        EditorModule,
     ],
 })
 export class AccessRuleModule {}

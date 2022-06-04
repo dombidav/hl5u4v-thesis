@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\AccessRule;
+use App\Rules\ValidateRuleDefinition;
 
 class AccessRuleUpdateRequest extends ApiResourceRequest
 {
@@ -12,7 +13,9 @@ class AccessRuleUpdateRequest extends ApiResourceRequest
         return
             [
                 'name' => ['min:3'],
-                //TODO: Complete definition
+                'description' => [],
+                'definition' => [new ValidateRuleDefinition()],
+                'action' => ['in:allow,forbid'],
             ];
     }
 

@@ -31,12 +31,12 @@ class AccessRule extends Model
     public function getDefinitionAttribute($value)
     {
         try {
-            $val = empty($value) ? new stdClass() : json_decode($value, false, 512, JSON_THROW_ON_ERROR);
+            return empty($value) ? new stdClass() : json_decode($value, false, 512, JSON_THROW_ON_ERROR);
         } catch (JsonException $e) {
             abort($e->getCode() ?? 500, $e->getMessage() ?? 'Json parse error');
         }
 
-        return [];
+        return new stdClass();
     }
 
     public function setDefinitionAttribute($value) {

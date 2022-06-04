@@ -29,7 +29,7 @@ class ValidateRuleDefinition implements Rule
         try{
             if(is_array($value)){
                 $deserialized = (object)$value;
-            }else {
+            }else if (is_string($value)) {
                 $deserialized = json_decode($value, false, 512, JSON_THROW_ON_ERROR);
             }
             if(empty($deserialized?->on) && empty($deserialized?->onDays)){

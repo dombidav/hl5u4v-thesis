@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router'
 import { nameOnlyFactory } from '../../../../factories/name-only.factory'
 import { IWorker } from '../../../../types/worker.interface'
 import { sub } from '../../../../utils/array.tools'
+import { WorkerService } from '../../../core/services/worker.service'
 
 @Component({
     selector: 'app-single-team',
@@ -13,7 +14,11 @@ import { sub } from '../../../../utils/array.tools'
     styleUrls: ['./single-team.component.scss'],
 })
 export class SingleTeamComponent extends SingleResourceComponent<ITeam> {
-    constructor(protected readonly service: TeamService, protected readonly route: ActivatedRoute) {
+    constructor(
+        protected readonly service: TeamService,
+        protected readonly workerService: WorkerService,
+        protected readonly route: ActivatedRoute,
+    ) {
         super()
     }
 
@@ -38,11 +43,19 @@ export class SingleTeamComponent extends SingleResourceComponent<ITeam> {
 
     async ngOnInit() {
         await this.init()
-        this.service.getAttachedList(this.resource.id).subscribe((res) => {
-            this.notAttachedList = res.not_attached
+        if (this.resource.id !== 'N/A') {
+            this.service.getAttachedList(this.resource.id).subscribe((res) => {
+                this.notAttachedList = res.not_attached
+                this.originalNotAttachedList = [...this.notAttachedList]
+                this.attachedList = res.attached
+                this.originalAttachedList = [...this.attachedList]
+            })
+            return
+        }
+
+        this.workerService.browse().subscribe((res) => {
+            this.notAttachedList = res
             this.originalNotAttachedList = [...this.notAttachedList]
-            this.attachedList = res.attached
-            this.originalAttachedList = [...this.attachedList]
         })
     }
 }

@@ -29,6 +29,24 @@
                         </div>
                     </div>
                 </div>
+                <div class='field col-12 my-5'>
+                    <span>
+                        <label for='description'>Description</label>
+                        <p-editor id='description' name='description' [(ngModel)]="resource.description" required #description='ngModel' [style]="{'height':'320px'}"></p-editor>
+                    </span>
+                    <div *ngIf='description.invalid && (description.dirty || description.touched)'
+                         class='alert'>
+                        <div *ngIf="description.errors?.['required']">
+                            Description is required.
+                        </div>
+                        <div *ngIf="description.errors?.['minlength']">
+                            Description must be at least 4 characters long.
+                        </div>
+                        <div *ngIf="description.errors?.['maxlength']">
+                            Description must be shorter than 250 characters.
+                        </div>
+                    </div>
+                </div>
                 <div class='field col-12 col-md-4 my-5'>
                     <span>
                         <p-selectButton name='rule-type' [options]='ruleTypes' [(ngModel)]='genericRule' optionLabel="label" optionValue="value"></p-selectButton>
