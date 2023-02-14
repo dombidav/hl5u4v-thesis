@@ -71,8 +71,6 @@ class AccessController extends Controller
                 return response()->json(['action' => 'allow'], ResponseCode::HTTP_ACCEPTED);
             }
         }
-
-        dd($asd);
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="Return LOCKED status, because none of the rules allowed access">
