@@ -87,14 +87,19 @@ This project is a base for a managed access control system webservice
 To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
-
-#### Frontend:
+#### With Docker
+- Docker
 - Node.js 14.0 or newer
 - Yarn 1.x
+
+#### Without Docker
+**Frontend:**
 - @angular/cli 13.x
+- Node.js 14.0 or newer
+- Yarn 1.x
 
 
-#### Backend:
+**Backend:**
 - PHP 8.1 or newer (this repository is PHP 8 compatible)
 - [Composer](https://getcomposer.org/)
 - Database of your choice (MySQL, SQLite)
