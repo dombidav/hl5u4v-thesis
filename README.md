@@ -88,6 +88,13 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
+#### Frontend:
+- Node.js 14.0 or newer
+- Yarn 1.x
+- @angular/cli 13.x
+
+
+#### Backend:
 - PHP 8.1 or newer (this repository is PHP 8 compatible)
 - [Composer](https://getcomposer.org/)
 - Database of your choice (MySQL, SQLite)
